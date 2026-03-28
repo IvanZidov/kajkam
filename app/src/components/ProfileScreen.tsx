@@ -1,12 +1,29 @@
-import { Gift } from 'lucide-react';
+import { Gift, LogOut, LogIn } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ProfileScreen() {
+  const { user, isGuest, signOut, signInWithGoogle } = useAuth();
+
+  const displayName = isGuest
+    ? 'Gost'
+    : (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Korisnik');
+  const avatarUrl = user?.user_metadata?.avatar_url;
+
   return (
     <div className="px-6 md:px-8 lg:px-12 py-6 space-y-6">
-      <div className="mb-8">
-        <span className="text-xs font-bold tracking-[0.1em] text-outline uppercase mb-1 block">MOJ PROFIL</span>
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-none uppercase">Bok, Marko!</h1>
-        <p className="text-on-surface-variant mt-2 text-sm md:text-base">Hvala što brineš o čistoći svog kvarta.</p>
+      <div className="mb-8 flex items-center gap-4">
+        {avatarUrl ? (
+          <img src={avatarUrl} alt="" className="w-14 h-14 rounded-full border-2 border-primary/20 shrink-0" />
+        ) : (
+          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-xl shrink-0">
+            {displayName[0]?.toUpperCase()}
+          </div>
+        )}
+        <div>
+          <span className="text-xs font-bold tracking-[0.1em] text-outline uppercase mb-1 block">MOJ PROFIL</span>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-none uppercase">Bok, {displayName}!</h1>
+          <p className="text-on-surface-variant mt-2 text-sm md:text-base">Hvala što brineš o čistoći svog kvarta.</p>
+        </div>
       </div>
 
       <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
@@ -63,6 +80,24 @@ export default function ProfileScreen() {
           Preuzmi nagradu
         </button>
       </div>
+
+      {isGuest ? (
+        <button
+          onClick={() => signInWithGoogle()}
+          className="w-full py-4 bg-primary text-on-primary font-bold text-sm tracking-widest uppercase shield-motif hover:bg-primary-container active:scale-95 transition-all flex items-center justify-center gap-3"
+        >
+          <LogIn className="w-5 h-5" />
+          Prijavi se s Google-om
+        </button>
+      ) : (
+        <button
+          onClick={() => signOut()}
+          className="w-full py-4 bg-surface-container-highest text-on-surface-variant font-bold text-sm tracking-widest uppercase shield-motif hover:bg-surface-container-high active:scale-95 transition-all flex items-center justify-center gap-3"
+        >
+          <LogOut className="w-5 h-5" />
+          Odjavi se
+        </button>
+      )}
     </div>
   );
 }

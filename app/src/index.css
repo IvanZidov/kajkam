@@ -20,6 +20,7 @@
   --color-waste-paper: #004482;
   --color-waste-bio: #705d00;
   --color-waste-glass: #16a34a;
+  --color-waste-mixed: #4B5563;
 }
 
 @layer utilities {

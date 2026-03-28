@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Camera, Map as MapIcon, MessageSquare, User } from 'lucide-react';
+import { Camera, Map as MapIcon, MessageSquare, User, Loader2 } from 'lucide-react';
+import { useAuth } from './contexts/AuthContext';
 import LoginScreen from './components/LoginScreen';
 import ProfileScreen from './components/ProfileScreen';
 import ScannerScreen from './components/ScannerScreen';
@@ -18,11 +19,19 @@ const sidebarTabs = [
 ];
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, isLoading } = useAuth();
   const [currentTab, setCurrentTab] = useState<Tab>('profil');
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   if (!isLoggedIn) {
-    return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
+    return <LoginScreen />;
   }
 
   return (

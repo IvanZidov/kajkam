@@ -1,10 +1,8 @@
 import { Leaf } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
-interface LoginScreenProps {
-  onLogin: () => void;
-}
-
-export default function LoginScreen({ onLogin }: LoginScreenProps) {
+export default function LoginScreen() {
+  const { signInWithGoogle, continueAsGuest } = useAuth();
   return (
     <main className="min-h-screen flex flex-col lg:flex-row bg-surface">
       {/* Desktop hero panel */}
@@ -67,7 +65,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
         <div className="w-full flex flex-col gap-4 z-10">
           <button
-            onClick={onLogin}
+            onClick={() => signInWithGoogle()}
             className="w-full h-14 md:h-16 bg-primary hover:bg-primary-container text-on-primary font-extrabold tracking-wider shield-motif flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all duration-150 uppercase"
           >
             <svg className="w-5 h-5 fill-current bg-white rounded-full p-0.5" viewBox="0 0 24 24">
@@ -80,7 +78,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           </button>
 
           <button
-            onClick={onLogin}
+            onClick={() => continueAsGuest()}
             className="w-full h-14 md:h-16 bg-surface-container-highest text-primary font-bold tracking-wider shield-motif hover:bg-surface-container-high transition-colors active:scale-95 duration-150 uppercase"
           >
             Nastavi kao gost
