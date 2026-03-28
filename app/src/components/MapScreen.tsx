@@ -1,9 +1,9 @@
-import { Search, Trash2, FileText, Recycle, Leaf, Factory, Navigation, AlertTriangle, Loader2, LocateFixed, X, MapPin, Check } from 'lucide-react';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { Search, Trash2, FileText, Recycle, Leaf, Factory, Navigation, AlertTriangle, Loader2, LocateFixed, X, MapPin, Check, Camera } from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Papa from 'papaparse';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -156,11 +156,68 @@ function MapResizer() {
   return null;
 }
 
+interface BinReport {
+  id: string;
+  report_type: 'bin_issue' | 'illegal_dump';
+  issue_type: string | null;
+  image_url: string | null;
+  latitude: number;
+  longitude: number;
+  status: string;
+  created_at: string;
+  description: string | null;
+}
+
+function createReportIcon(reportType: 'bin_issue' | 'illegal_dump'): L.DivIcon {
+  const color = reportType === 'illegal_dump' ? '#BB0400' : '#FF8C00';
+  const label = reportType === 'illegal_dump' ? '⚠' : '!';
+  return L.divIcon({
+    className: 'report-marker',
+    html: `<div style="
+      width: 22px; height: 22px;
+      background: ${color}; color: white;
+      border: 2px solid white; border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+    ">${label}</div>`,
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+  });
+}
+
+const reportIconCache = new Map<string, L.DivIcon>();
+function getCachedReportIcon(type: 'bin_issue' | 'illegal_dump'): L.DivIcon {
+  if (!reportIconCache.has(type)) {
+    reportIconCache.set(type, createReportIcon(type));
+  }
+  return reportIconCache.get(type)!;
+}
+
+function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
+  useMapEvents({
+    click(e) {
+      onMapClick(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
+}
+
 export default function MapScreen() {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const [reportingBin, setReportingBin] = useState(false);
+  const { user, isGuest } = useAuth();
   const [reportSuccess, setReportSuccess] = useState(false);
+
+  // Report flow state
+  const [reportMode, setReportMode] = useState<'none' | 'bin_issue' | 'illegal_dump_placing'>('none');
+  const [reportImage, setReportImage] = useState<string | null>(null);
+  const [reportIssueType, setReportIssueType] = useState<'full' | 'damaged' | 'missing' | 'other'>('full');
+  const [reportDescription, setReportDescription] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [illegalDumpPin, setIllegalDumpPin] = useState<[number, number] | null>(null);
+  const reportImageRef = useRef<HTMLInputElement>(null);
+  const [selectedReport, setSelectedReport] = useState<BinReport | null>(null);
+  const [reports, setReports] = useState<BinReport[]>([]);
 
   const filterChips = useMemo(() => [
     { id: 'nearby', label: t.map.nearMe, icon: LocateFixed },
@@ -253,6 +310,101 @@ export default function MapScreen() {
     }).catch(() => {});
   }, [locateUser]);
 
+  // Fetch reports for map display
+  useEffect(() => {
+    const fetchReports = async () => {
+      const { data } = await supabase
+        .from('bin_reports')
+        .select('id, report_type, issue_type, image_url, latitude, longitude, status, created_at, description')
+        .eq('status', 'reported')
+        .order('created_at', { ascending: false })
+        .limit(200);
+      if (data) setReports(data as BinReport[]);
+    };
+    fetchReports();
+  }, [reportSuccess]);
+
+  // Image capture handler
+  const handleReportImage = (e: import('react').ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert(t.map.imageTooLarge); return; }
+    const reader = new FileReader();
+    reader.onload = () => setReportImage(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  // Upload report image to Supabase Storage
+  const uploadReportImage = async (base64DataUrl: string): Promise<string | null> => {
+    const [header, base64Data] = base64DataUrl.split(',');
+    const mimeType = header.match(/data:(.*?);/)?.[1] || 'image/jpeg';
+    const ext = mimeType.split('/')[1] || 'jpg';
+    const folder = user ? `reports/${user.id}` : 'reports/guest';
+    const fileName = `${folder}/${Date.now()}.${ext}`;
+
+    const byteString = atob(base64Data);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+    const blob = new Blob([ab], { type: mimeType });
+
+    const { error } = await supabase.storage.from('scan-images').upload(fileName, blob, { contentType: mimeType });
+    if (error) { console.error('Upload error:', error); return null; }
+    return supabase.storage.from('scan-images').getPublicUrl(fileName).data.publicUrl;
+  };
+
+  const resetReportState = () => {
+    setReportMode('none');
+    setReportImage(null);
+    setReportDescription('');
+    setReportIssueType('full');
+    setReportSubmitting(false);
+    setIllegalDumpPin(null);
+  };
+
+  // Submit bin issue report
+  const handleSubmitBinReport = async () => {
+    if (!selectedBin) return;
+    setReportSubmitting(true);
+    const imageUrl = reportImage ? await uploadReportImage(reportImage) : null;
+    await supabase.from('bin_reports').insert({
+      user_id: user?.id ?? null,
+      report_type: 'bin_issue',
+      issue_type: reportIssueType,
+      bin_object_id: selectedBin.OBJECTID,
+      bin_name: selectedBin.Name,
+      bin_location: selectedBin.Location,
+      bin_type: selectedBin.Bin_Type,
+      latitude: selectedBin.Latitude,
+      longitude: selectedBin.Longitude,
+      image_url: imageUrl,
+      description: reportDescription || null,
+    });
+    if (user) await supabase.rpc('increment_eko_bodovi', { points: 5 });
+    resetReportState();
+    setReportSuccess(true);
+    setTimeout(() => setReportSuccess(false), 3000);
+  };
+
+  // Submit illegal dump report
+  const handleSubmitIllegalDump = async () => {
+    if (!illegalDumpPin) return;
+    setReportSubmitting(true);
+    const imageUrl = reportImage ? await uploadReportImage(reportImage) : null;
+    await supabase.from('bin_reports').insert({
+      user_id: user?.id ?? null,
+      report_type: 'illegal_dump',
+      latitude: illegalDumpPin[0],
+      longitude: illegalDumpPin[1],
+      image_url: imageUrl,
+      description: reportDescription || null,
+    });
+    if (user) await supabase.rpc('increment_eko_bodovi', { points: 10 });
+    resetReportState();
+    setReportSuccess(true);
+    setTimeout(() => setReportSuccess(false), 3000);
+  };
+
   // Compute bins with distance from user
   const binsWithDistance = useMemo(() => {
     if (!userLocation) return null;
@@ -306,6 +458,8 @@ export default function MapScreen() {
 
   const handleBinClick = useCallback((bin: BinLocation) => {
     setSelectedBin(bin);
+    setSelectedReport(null);
+    resetReportState();
     setFlyTarget([bin.Latitude, bin.Longitude]);
     setFlyZoom(17);
   }, []);
@@ -463,10 +617,69 @@ export default function MapScreen() {
                 />
               ))}
             </MarkerClusterGroup>
+
+            {/* Report markers (outside cluster group - always visible) */}
+            {reports.map((report) => (
+              <Marker
+                key={report.id}
+                position={[report.latitude, report.longitude]}
+                icon={getCachedReportIcon(report.report_type)}
+                eventHandlers={{
+                  click: () => {
+                    setSelectedReport(report);
+                    setSelectedBin(null);
+                    resetReportState();
+                    setFlyTarget([report.latitude, report.longitude]);
+                    setFlyZoom(17);
+                  },
+                }}
+              />
+            ))}
+
+            {/* Illegal dump placement mode */}
+            {reportMode === 'illegal_dump_placing' && (
+              <MapClickHandler onMapClick={(lat, lng) => setIllegalDumpPin([lat, lng])} />
+            )}
+
+            {/* Draggable illegal dump pin */}
+            {reportMode === 'illegal_dump_placing' && illegalDumpPin && (
+              <Marker
+                position={illegalDumpPin}
+                icon={getCachedReportIcon('illegal_dump')}
+                draggable
+                eventHandlers={{
+                  dragend: (e) => {
+                    const latlng = e.target.getLatLng();
+                    setIllegalDumpPin([latlng.lat, latlng.lng]);
+                  },
+                }}
+              />
+            )}
           </MapContainer>
 
-          {/* Locate user button */}
+          {/* Map action buttons */}
           <div className="absolute bottom-28 right-4 z-[1000] flex flex-col gap-3">
+            {/* Report illegal dump FAB */}
+            <button
+              onClick={() => {
+                if (reportMode === 'illegal_dump_placing') {
+                  resetReportState();
+                } else {
+                  setReportMode('illegal_dump_placing');
+                  setSelectedBin(null);
+                  setSelectedReport(null);
+                  setIllegalDumpPin(userLocation ?? ZAGREB_CENTER);
+                }
+              }}
+              className={`p-3 rounded-full shadow-xl active:scale-95 transition-all ${
+                reportMode === 'illegal_dump_placing'
+                  ? 'bg-secondary text-white'
+                  : 'bg-surface-container-lowest text-secondary'
+              }`}
+            >
+              <AlertTriangle className="w-6 h-6" />
+            </button>
+            {/* Locate user button */}
             <button
               onClick={handleLocateButton}
               disabled={locatingUser}
@@ -479,6 +692,13 @@ export default function MapScreen() {
               )}
             </button>
           </div>
+
+          {/* Illegal dump placement banner */}
+          {reportMode === 'illegal_dump_placing' && (
+            <div className="absolute top-28 left-1/2 -translate-x-1/2 z-[1000] bg-secondary text-white px-4 py-2 shield-motif shadow-lg text-[10px] font-black uppercase tracking-widest text-center">
+              {t.map.tapToPlacePin}
+            </div>
+          )}
         </>
       )}
 
@@ -514,11 +734,11 @@ export default function MapScreen() {
       )}
 
       {/* Bottom Sheet - selected bin details */}
-      {selectedBin && (
+      {selectedBin && !selectedReport && (
         <div className="absolute bottom-20 left-0 right-0 z-[1000] px-4">
           <div className="bg-surface-container-lowest shadow-[0_-4px_30px_-8px_rgba(0,0,0,0.15)] shield-motif p-5 relative">
             <button
-              onClick={() => setSelectedBin(null)}
+              onClick={() => { setSelectedBin(null); resetReportState(); }}
               className="absolute top-3 right-3 text-outline hover:text-on-surface p-1"
             >
               <X className="w-5 h-5" />
@@ -568,39 +788,172 @@ export default function MapScreen() {
               {t.map.navigate}
             </button>
 
-            {/* Report problem - secondary action */}
-            <button
-              disabled={reportingBin || reportSuccess || !user}
-              onClick={async () => {
-                if (!user || !selectedBin) return;
-                setReportingBin(true);
-                await supabase.from('bin_reports').insert({
-                  user_id: user.id,
-                  bin_object_id: selectedBin.OBJECTID,
-                  bin_name: selectedBin.Name,
-                  bin_location: selectedBin.Location,
-                  bin_type: selectedBin.Bin_Type,
-                  latitude: selectedBin.Latitude,
-                  longitude: selectedBin.Longitude,
-                });
-                await supabase.rpc('increment_eko_bodovi', { points: 5 });
-                setReportingBin(false);
-                setReportSuccess(true);
-                setTimeout(() => setReportSuccess(false), 3000);
-              }}
-              className={`w-full mt-2 font-bold py-2 flex items-center justify-center gap-1.5 uppercase text-[10px] tracking-widest transition-colors ${
-                reportSuccess ? 'text-green-600' : 'text-outline hover:text-on-surface'
-              } disabled:opacity-50`}
-            >
-              {reportingBin ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : reportSuccess ? (
+            {/* Report problem section */}
+            {reportMode === 'bin_issue' ? (
+              <div className="mt-3 space-y-3">
+                {/* Hidden file input */}
+                <input ref={reportImageRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleReportImage} />
+
+                {/* Issue type chips */}
+                <div className="flex gap-2 flex-wrap">
+                  {(['full', 'damaged', 'missing', 'other'] as const).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setReportIssueType(type)}
+                      className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide transition-colors ${
+                        reportIssueType === type ? 'bg-secondary text-white' : 'bg-surface-container-low text-on-surface-variant'
+                      }`}
+                    >
+                      {t.map[`issue_${type}`]}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Photo capture */}
+                <button
+                  onClick={() => reportImageRef.current?.click()}
+                  className="w-full bg-surface-container-low py-3 shield-motif flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant active:bg-surface-container transition-colors"
+                >
+                  <Camera className="w-4 h-4" />
+                  {reportImage ? t.map.photoAdded : t.map.addPhoto}
+                </button>
+                {reportImage && <img src={reportImage} className="w-full h-32 object-cover shield-motif" alt="" />}
+
+                {/* Description */}
+                <textarea
+                  value={reportDescription}
+                  onChange={(e) => setReportDescription(e.target.value)}
+                  placeholder={t.map.descriptionPlaceholder}
+                  className="w-full bg-surface-container-low p-3 shield-motif text-sm resize-none focus:outline-none focus:ring-1 focus:ring-primary/30"
+                  rows={2}
+                />
+
+                {/* Submit + Cancel */}
+                <button
+                  onClick={handleSubmitBinReport}
+                  disabled={reportSubmitting}
+                  className="w-full bg-secondary text-white font-black py-3 tracking-widest shield-motif active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase text-xs disabled:opacity-50"
+                >
+                  {reportSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4" />}
+                  {t.map.submitReport}
+                </button>
+                {isGuest && <p className="text-[10px] text-outline text-center">{t.map.guestReportNote}</p>}
+                <button
+                  onClick={resetReportState}
+                  className="w-full text-outline text-[10px] font-bold uppercase tracking-widest py-1"
+                >
+                  {t.map.cancelReport}
+                </button>
+              </div>
+            ) : reportSuccess ? (
+              <div className="w-full mt-2 font-bold py-2 flex items-center justify-center gap-1.5 uppercase text-[10px] tracking-widest text-green-600">
                 <Check className="w-3.5 h-3.5" />
-              ) : (
+                {t.map.reportSubmitted}
+              </div>
+            ) : (
+              <button
+                onClick={() => setReportMode('bin_issue')}
+                className="w-full mt-2 font-bold py-2 flex items-center justify-center gap-1.5 uppercase text-[10px] tracking-widest text-outline hover:text-on-surface transition-colors"
+              >
                 <AlertTriangle className="w-3.5 h-3.5" />
-              )}
-              {reportSuccess ? 'Prijavljeno! +5 EkoBodova' : t.map.reportProblem}
+                {t.map.reportProblem}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Illegal dump report form */}
+      {reportMode === 'illegal_dump_placing' && illegalDumpPin && (
+        <div className="absolute bottom-20 left-0 right-0 z-[1000] px-4">
+          <div className="bg-surface-container-lowest shadow-[0_-4px_30px_-8px_rgba(0,0,0,0.15)] shield-motif p-5 relative">
+            <button
+              onClick={resetReportState}
+              className="absolute top-3 right-3 text-outline hover:text-on-surface p-1"
+            >
+              <X className="w-5 h-5" />
             </button>
+            <div className="w-10 h-1 bg-surface-variant rounded-full mx-auto mb-4"></div>
+
+            <h3 className="text-xs font-black uppercase tracking-widest text-secondary mb-1">
+              {t.map.reportIllegalDump}
+            </h3>
+            <p className="text-[10px] text-outline mb-3">{t.map.dragPinInstruction}</p>
+
+            {/* Hidden file input */}
+            <input ref={reportImageRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleReportImage} />
+
+            {/* Photo capture */}
+            <button
+              onClick={() => reportImageRef.current?.click()}
+              className="w-full bg-surface-container-low py-3 shield-motif flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant active:bg-surface-container transition-colors"
+            >
+              <Camera className="w-4 h-4" />
+              {reportImage ? t.map.photoAdded : t.map.addPhoto}
+            </button>
+            {reportImage && <img src={reportImage} className="w-full h-32 object-cover shield-motif mt-2" alt="" />}
+
+            {/* Description */}
+            <textarea
+              value={reportDescription}
+              onChange={(e) => setReportDescription(e.target.value)}
+              placeholder={t.map.descriptionPlaceholder}
+              className="w-full bg-surface-container-low p-3 shield-motif text-sm mt-2 resize-none focus:outline-none focus:ring-1 focus:ring-primary/30"
+              rows={2}
+            />
+
+            {/* Submit */}
+            <button
+              onClick={handleSubmitIllegalDump}
+              disabled={reportSubmitting}
+              className="w-full bg-secondary text-white font-black py-3 tracking-widest shield-motif active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase text-xs mt-3 disabled:opacity-50"
+            >
+              {reportSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4" />}
+              {t.map.submitReport}
+            </button>
+            {isGuest && <p className="text-[10px] text-outline text-center mt-2">{t.map.guestReportNote}</p>}
+          </div>
+        </div>
+      )}
+
+      {/* Report detail view */}
+      {selectedReport && (
+        <div className="absolute bottom-20 left-0 right-0 z-[1000] px-4">
+          <div className="bg-surface-container-lowest shadow-[0_-4px_30px_-8px_rgba(0,0,0,0.15)] shield-motif p-5 relative">
+            <button
+              onClick={() => setSelectedReport(null)}
+              className="absolute top-3 right-3 text-outline hover:text-on-surface p-1"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="w-10 h-1 bg-surface-variant rounded-full mx-auto mb-4"></div>
+
+            {/* Report type badge */}
+            <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide text-white mb-3 ${
+              selectedReport.report_type === 'illegal_dump' ? 'bg-secondary' : 'bg-[#FF8C00]'
+            }`}>
+              {selectedReport.report_type === 'illegal_dump' ? t.map.illegalDumpLabel : t.map.binIssueLabel}
+            </span>
+            {selectedReport.issue_type && (
+              <span className="inline-block ml-2 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-surface-container-low text-on-surface-variant">
+                {t.map[`issue_${selectedReport.issue_type}` as keyof typeof t.map] as string}
+              </span>
+            )}
+
+            {/* Image */}
+            {selectedReport.image_url && (
+              <img src={selectedReport.image_url} className="w-full h-40 object-cover shield-motif mb-3" alt="" />
+            )}
+
+            {/* Description */}
+            {selectedReport.description && (
+              <p className="text-sm text-on-surface mb-2">{selectedReport.description}</p>
+            )}
+
+            {/* Timestamp */}
+            <p className="text-[10px] text-outline">
+              {t.map.reportedOn} {new Date(selectedReport.created_at).toLocaleDateString()}
+            </p>
           </div>
         </div>
       )}

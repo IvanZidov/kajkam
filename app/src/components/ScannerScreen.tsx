@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { Camera, Upload, Trash2, Award, ChevronRight, Leaf, History, RotateCcw, AlertCircle, Clock, X } from 'lucide-react';
+import { Camera, Upload, Trash2, Award, ChevronRight, Leaf, History, RotateCcw, AlertCircle, Clock, X, Lightbulb } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,6 +10,7 @@ interface WasteItem {
   bin: string;
   binColor: 'waste-plastic' | 'waste-paper' | 'waste-bio' | 'waste-glass' | 'waste-mixed';
   ecoPoints: number;
+  tip?: string;
 }
 
 interface ScanResult {
@@ -151,7 +152,7 @@ export default function ScannerScreen() {
 
         supabase.from('scan_history').insert({
           user_id: user.id,
-          items: items.map(i => ({ name: i.name, bin: i.bin, binColor: i.binColor, ecoPoints: i.ecoPoints })),
+          items: items.map(i => ({ name: i.name, bin: i.bin, binColor: i.binColor, ecoPoints: i.ecoPoints, tip: i.tip })),
           co2_saved: parsed.co2Saved ?? 0,
           points_earned: totalPts,
           image_url: imageUrl,
@@ -330,16 +331,24 @@ export default function ScannerScreen() {
               </p>
 
               {result.items.map((item, idx) => (
-                <div key={idx} className={`bg-surface-container-low p-4 shield-motif border-l-8 ${BORDER_CLASSES[item.binColor]} flex items-center justify-between shadow-sm`}>
-                  <div>
-                    <h2 className="text-lg font-black text-primary tracking-tighter uppercase leading-tight">{item.name}</h2>
-                    <p className="text-[10px] font-bold uppercase text-on-surface-variant/60 tracking-wider mt-1">
-                      {t.scanner.disposeIn} <span className="text-on-surface">{binLabelMap[item.bin as keyof typeof binLabelMap] ?? item.bin}</span>
-                    </p>
+                <div key={idx} className={`bg-surface-container-low shield-motif border-l-8 ${BORDER_CLASSES[item.binColor]} shadow-sm overflow-hidden`}>
+                  <div className="p-4 flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-black text-primary tracking-tighter uppercase leading-tight">{item.name}</h2>
+                      <p className="text-[10px] font-bold uppercase text-on-surface-variant/60 tracking-wider mt-1">
+                        {t.scanner.disposeIn} <span className="text-on-surface">{binLabelMap[item.bin as keyof typeof binLabelMap] ?? item.bin}</span>
+                      </p>
+                    </div>
+                    <div className={`w-12 h-12 ${BG_CLASSES[item.binColor]} shield-motif flex items-center justify-center shrink-0`}>
+                      <Trash2 className="text-black w-6 h-6" />
+                    </div>
                   </div>
-                  <div className={`w-12 h-12 ${BG_CLASSES[item.binColor]} shield-motif flex items-center justify-center`}>
-                    <Trash2 className="text-black w-6 h-6" />
-                  </div>
+                  {item.tip && (
+                    <div className="px-4 pb-3 flex items-start gap-2">
+                      <Lightbulb className="w-3.5 h-3.5 text-primary/60 shrink-0 mt-0.5" />
+                      <p className="text-xs text-on-surface-variant leading-relaxed">{item.tip}</p>
+                    </div>
+                  )}
                 </div>
               ))}
 
@@ -440,6 +449,16 @@ export default function ScannerScreen() {
                           <span className="text-[10px] font-bold text-primary">+{scan.points_earned} EkoBodova</span>
                           <span className="text-[10px] text-on-surface-variant">{Number(scan.co2_saved).toFixed(2)} kg CO₂</span>
                         </div>
+                        {(scan.items as WasteItem[]).some(i => i.tip) && (
+                          <div className="mt-2 space-y-1">
+                            {(scan.items as WasteItem[]).filter(i => i.tip).map((item, i) => (
+                              <div key={i} className="flex items-start gap-1.5">
+                                <Lightbulb className="w-3 h-3 text-primary/50 shrink-0 mt-0.5" />
+                                <p className="text-[10px] text-on-surface-variant leading-snug">{item.tip}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

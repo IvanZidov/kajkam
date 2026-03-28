@@ -1,130 +1,137 @@
 import type { ElementType, ReactNode } from 'react';
-import { X, Calendar, Trash2, Recycle, Truck, AlertTriangle, MapPin, Phone, Scale, Coins, Leaf } from 'lucide-react';
+import { ArrowLeft, Calendar, Trash2, Recycle, Truck, AlertTriangle, MapPin, Phone, Scale, Coins, Leaf, BookOpen } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 
 interface InfoScreenProps {
-  onClose: () => void;
+  onBack: () => void;
 }
 
-const binColors: Record<string, { bg: string; border: string }> = {
-  yellow: { bg: 'bg-yellow-100', border: 'border-yellow-400' },
-  blue: { bg: 'bg-blue-100', border: 'border-blue-400' },
-  brown: { bg: 'bg-amber-100', border: 'border-amber-600' },
-  green: { bg: 'bg-green-100', border: 'border-green-500' },
-  grey: { bg: 'bg-gray-100', border: 'border-gray-400' },
+const BIN_STYLES: Record<string, string> = {
+  yellow: 'bg-[#FFF9C4] border-l-[#F9A825]',
+  blue: 'bg-[#E3F2FD] border-l-[#1976D2]',
+  brown: 'bg-[#EFEBE9] border-l-[#6D4C41]',
+  green: 'bg-[#E8F5E9] border-l-[#388E3C]',
+  grey: 'bg-[#F5F5F5] border-l-[#616161]',
 };
 
 function Section({ icon: Icon, title, children }: { icon: ElementType; title: string; children: ReactNode }) {
   return (
-    <div className="mb-5">
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className="w-4.5 h-4.5 text-primary shrink-0" strokeWidth={2.2} />
-        <h3 className="text-xs font-bold uppercase tracking-wider text-primary">{title}</h3>
+    <div className="bg-surface-container-lowest shield-motif p-6 shadow-[0_4px_24px_-4px_rgba(0,68,130,0.06)]">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="bg-primary-container p-2 shield-motif">
+          <Icon className="w-4 h-4 text-white" strokeWidth={2.2} />
+        </div>
+        <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-primary">{title}</h3>
       </div>
-      <div className="pl-7">{children}</div>
+      {children}
     </div>
   );
 }
 
-function PreText({ text }: { text: string }) {
+function TextBlock({ text }: { text: string }) {
   return (
-    <p className="text-sm text-on-surface leading-relaxed whitespace-pre-line">{text}</p>
+    <p className="text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">{text}</p>
   );
 }
 
 function BinCard({ color, text }: { color: string; text: string }) {
-  const c = binColors[color] ?? binColors.grey;
+  const style = BIN_STYLES[color] ?? BIN_STYLES.grey;
   return (
-    <div className={`${c.bg} border-l-3 ${c.border} px-3 py-2 mb-2 shield-motif`}>
+    <div className={`${style} border-l-3 px-3 py-2.5 shield-motif`}>
       <p className="text-xs text-on-surface leading-relaxed">{text}</p>
     </div>
   );
 }
 
-export default function InfoScreen({ onClose }: InfoScreenProps) {
+export default function InfoScreen({ onBack }: InfoScreenProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="fixed inset-0 z-[100] bg-surface flex flex-col">
+    <div className="px-6 py-6 space-y-4">
       {/* Header */}
-      <header className="bg-surface/80 backdrop-blur-md h-16 flex items-center justify-between px-6 shield-motif shadow-sm shrink-0">
-        <h2 className="font-black tracking-widest uppercase text-lg text-primary">{t.info.title}</h2>
+      <div className="mb-4">
         <button
-          onClick={onClose}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors"
+          onClick={onBack}
+          className="flex items-center gap-2 text-primary mb-4 active:scale-95 transition-transform"
         >
-          <X className="w-5 h-5 text-primary" />
+          <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
+          <span className="text-xs font-bold uppercase tracking-wider">{t.nav.profile}</span>
         </button>
-      </header>
-
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto px-5 py-5 hide-scrollbar">
-        <div className="max-w-lg mx-auto">
-
-          {/* Sorting Rules */}
-          <Section icon={Trash2} title={t.info.sortingRules}>
-            <BinCard color="yellow" text={t.info.yellowBin} />
-            <BinCard color="blue" text={t.info.blueBin} />
-            <BinCard color="brown" text={t.info.brownBin} />
-            <BinCard color="green" text={t.info.greenBin} />
-            <BinCard color="grey" text={t.info.greyBin} />
-          </Section>
-
-          {/* Collection Schedule */}
-          <Section icon={Calendar} title={t.info.collectionSchedule}>
-            <PreText text={t.info.collectionScheduleDesc} />
-          </Section>
-
-          {/* Recycling Yards */}
-          <Section icon={Recycle} title={t.info.recyclingYards}>
-            <PreText text={t.info.recyclingYardsDesc} />
-            <div className="mt-2 bg-surface-container-low p-3 shield-motif">
-              <PreText text={t.info.recyclingYardsList} />
-              <p className="text-xs text-primary font-bold mt-2">{t.info.recyclingYardsHours}</p>
-            </div>
-          </Section>
-
-          {/* Bulky Waste */}
-          <Section icon={Truck} title={t.info.bulkyWaste}>
-            <PreText text={t.info.bulkyWasteDesc} />
-          </Section>
-
-          {/* Special Waste */}
-          <Section icon={AlertTriangle} title={t.info.specialWaste}>
-            <PreText text={t.info.specialWasteList} />
-          </Section>
-
-          {/* Green Islands */}
-          <Section icon={MapPin} title={t.info.greenIslands}>
-            <PreText text={t.info.greenIslandsDesc} />
-          </Section>
-
-          {/* Deposit Return */}
-          <Section icon={Coins} title={t.info.depositReturn}>
-            <PreText text={t.info.depositReturnDesc} />
-          </Section>
-
-          {/* Composting */}
-          <Section icon={Leaf} title={t.info.composting}>
-            <PreText text={t.info.compostingDesc} />
-          </Section>
-
-          {/* Contacts */}
-          <Section icon={Phone} title={t.info.contacts}>
-            <PreText text={t.info.contactsList} />
-          </Section>
-
-          {/* Fines */}
-          <Section icon={Scale} title={t.info.fines}>
-            <PreText text={t.info.finesDesc} />
-          </Section>
-
-          {/* Source */}
-          <p className="text-[10px] text-outline text-center mt-6 mb-4 uppercase tracking-wider">
-            {t.info.source}
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="bg-primary-container p-3 shield-motif">
+            <BookOpen className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold tracking-[0.15em] text-outline uppercase block">{t.common.appName}</span>
+            <h1 className="text-3xl font-black tracking-tight text-primary leading-none uppercase">{t.info.title}</h1>
+          </div>
         </div>
       </div>
+
+      {/* Sorting Rules */}
+      <Section icon={Trash2} title={t.info.sortingRules}>
+        <div className="space-y-2">
+          <BinCard color="yellow" text={t.info.yellowBin} />
+          <BinCard color="blue" text={t.info.blueBin} />
+          <BinCard color="brown" text={t.info.brownBin} />
+          <BinCard color="green" text={t.info.greenBin} />
+          <BinCard color="grey" text={t.info.greyBin} />
+        </div>
+      </Section>
+
+      {/* Collection Schedule */}
+      <Section icon={Calendar} title={t.info.collectionSchedule}>
+        <TextBlock text={t.info.collectionScheduleDesc} />
+      </Section>
+
+      {/* Recycling Yards */}
+      <Section icon={Recycle} title={t.info.recyclingYards}>
+        <TextBlock text={t.info.recyclingYardsDesc} />
+        <div className="mt-3 bg-surface-container-low p-4 shield-motif">
+          <TextBlock text={t.info.recyclingYardsList} />
+          <p className="text-[10px] font-bold text-primary uppercase tracking-wider mt-3">{t.info.recyclingYardsHours}</p>
+        </div>
+      </Section>
+
+      {/* Bulky Waste */}
+      <Section icon={Truck} title={t.info.bulkyWaste}>
+        <TextBlock text={t.info.bulkyWasteDesc} />
+      </Section>
+
+      {/* Special Waste */}
+      <Section icon={AlertTriangle} title={t.info.specialWaste}>
+        <TextBlock text={t.info.specialWasteList} />
+      </Section>
+
+      {/* Green Islands */}
+      <Section icon={MapPin} title={t.info.greenIslands}>
+        <TextBlock text={t.info.greenIslandsDesc} />
+      </Section>
+
+      {/* Deposit Return */}
+      <Section icon={Coins} title={t.info.depositReturn}>
+        <TextBlock text={t.info.depositReturnDesc} />
+      </Section>
+
+      {/* Composting */}
+      <Section icon={Leaf} title={t.info.composting}>
+        <TextBlock text={t.info.compostingDesc} />
+      </Section>
+
+      {/* Contacts */}
+      <Section icon={Phone} title={t.info.contacts}>
+        <TextBlock text={t.info.contactsList} />
+      </Section>
+
+      {/* Fines */}
+      <Section icon={Scale} title={t.info.fines}>
+        <TextBlock text={t.info.finesDesc} />
+      </Section>
+
+      {/* Source */}
+      <p className="text-[10px] text-outline text-center pt-2 pb-4 uppercase tracking-wider">
+        {t.info.source}
+      </p>
     </div>
   );
 }

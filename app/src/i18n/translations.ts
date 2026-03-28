@@ -90,6 +90,25 @@ export interface Translations {
     reportProblem: string;
     unknown: string;
     binDefault: string;
+    reportIllegalDump: string;
+    tapToPlacePin: string;
+    dragPinInstruction: string;
+    addPhoto: string;
+    photoAdded: string;
+    submitReport: string;
+    descriptionPlaceholder: string;
+    imageTooLarge: string;
+    reportSubmitted: string;
+    reportSubmittedDump: string;
+    issue_full: string;
+    issue_damaged: string;
+    issue_missing: string;
+    issue_other: string;
+    illegalDumpLabel: string;
+    binIssueLabel: string;
+    reportedOn: string;
+    guestReportNote: string;
+    cancelReport: string;
   };
   ai: {
     scannerSystemPrompt: string;
@@ -230,6 +249,25 @@ export const hr: Translations = {
     reportProblem: 'Prijavi problem',
     unknown: 'Nepoznato',
     binDefault: 'Spremnik',
+    reportIllegalDump: 'Prijavi divlje odlagalište',
+    tapToPlacePin: 'Dodirni kartu za postavljanje oznake',
+    dragPinInstruction: 'Pomakni oznaku na točnu lokaciju',
+    addPhoto: 'Dodaj fotografiju',
+    photoAdded: 'Fotografija dodana',
+    submitReport: 'Pošalji prijavu',
+    descriptionPlaceholder: 'Opis problema (opcionalno)...',
+    imageTooLarge: 'Slika je prevelika (max 5MB)',
+    reportSubmitted: 'Prijavljeno! +5 EkoBodova',
+    reportSubmittedDump: 'Prijavljeno! +10 EkoBodova',
+    issue_full: 'Pun',
+    issue_damaged: 'Oštećen',
+    issue_missing: 'Nedostaje',
+    issue_other: 'Ostalo',
+    illegalDumpLabel: 'Divlje odlagalište',
+    binIssueLabel: 'Problem sa spremnikom',
+    reportedOn: 'Prijavljeno',
+    guestReportNote: 'Prijavi se za EkoBodove',
+    cancelReport: 'Odustani',
   },
   ai: {
     scannerSystemPrompt: `Ti si AI sustav za prepoznavanje otpada u Zagrebu, Hrvatska.
@@ -245,7 +283,7 @@ Kategorije spremnika (KORISTI ISKLJUČIVO OVE KLJUČEVE):
 Odgovori ISKLJUČIVO u JSON formatu (bez markdown oznaka):
 {
   "items": [
-    { "name": "Naziv predmeta na hrvatskom", "bin": "ključ_spremnika", "ecoPoints": 1 }
+    { "name": "Naziv predmeta na hrvatskom", "bin": "ključ_spremnika", "ecoPoints": 1, "tip": "Praktičan savjet za korisnika" }
   ],
   "co2Saved": 0.15
 }
@@ -255,6 +293,7 @@ Pravila:
 - "bin" mora biti jedan od: plastika, papir, bio, staklo, miješani
 - "ecoPoints" je 1 po predmetu
 - "co2Saved" je ukupna ušteda CO2 u kg (procjena)
+- "tip" je kratak, praktičan savjet na hrvatskom (1 rečenica) — npr. "Skini čep i baci ga odvojeno u plastiku", "Isperi bocu prije bacanja", "Spljošti kutiju da zauzme manje mjesta", "Odvoji poklopac od staklenke". Savjet treba biti specifičan za taj predmet, ne generički. Ako nema posebnog savjeta, napiši u koji spremnik ide i zašto.
 - Ako nema prepoznatljivog otpada, vrati prazan items niz
 - NE dodaj nikakav tekst izvan JSON objekta`,
     scannerUserPrompt: 'Analiziraj ovu sliku i klasificiraj otpad.',
@@ -266,6 +305,7 @@ Tvoja pravila:
 - Ne koristi markdown formatiranje (bold, italic, liste s *) — piši čisti tekst
 - Budi pozitivan i motiviraj korisnike na recikliranje
 - Ako pitanje nije vezano za otpad/recikliranje, ljubazno preusmjeri razgovor
+- UVIJEK daj praktične savjete za pripremu otpada — npr. "Skini čep s boce i baci ga odvojeno", "Isperi teglu prije bacanja", "Spljošti kartonsku kutiju". Korisnici često ne znaju da trebaju rastaviti dijelove predmeta prije bacanja.
 
 ZAGREBAČKI SUSTAV SORTIRANJA OTPADA:
 
@@ -456,6 +496,25 @@ export const en: Translations = {
     reportProblem: 'Report problem',
     unknown: 'Unknown',
     binDefault: 'Bin',
+    reportIllegalDump: 'Report illegal dump',
+    tapToPlacePin: 'Tap the map to place a pin',
+    dragPinInstruction: 'Drag the pin to the exact location',
+    addPhoto: 'Add photo',
+    photoAdded: 'Photo added',
+    submitReport: 'Submit report',
+    descriptionPlaceholder: 'Describe the issue (optional)...',
+    imageTooLarge: 'Image is too large (max 5MB)',
+    reportSubmitted: 'Reported! +5 EcoPoints',
+    reportSubmittedDump: 'Reported! +10 EcoPoints',
+    issue_full: 'Full',
+    issue_damaged: 'Damaged',
+    issue_missing: 'Missing',
+    issue_other: 'Other',
+    illegalDumpLabel: 'Illegal dump',
+    binIssueLabel: 'Bin issue',
+    reportedOn: 'Reported on',
+    guestReportNote: 'Sign in for EcoPoints',
+    cancelReport: 'Cancel',
   },
   ai: {
     scannerSystemPrompt: `You are an AI waste recognition system for Zagreb, Croatia.
@@ -471,7 +530,7 @@ Bin categories (USE ONLY THESE KEYS):
 Respond EXCLUSIVELY in JSON format (no markdown markers):
 {
   "items": [
-    { "name": "Item name in English", "bin": "bin_key", "ecoPoints": 1 }
+    { "name": "Item name in English", "bin": "bin_key", "ecoPoints": 1, "tip": "Practical advice for the user" }
   ],
   "co2Saved": 0.15
 }
@@ -481,6 +540,7 @@ Rules:
 - "bin" must be one of: plastika, papir, bio, staklo, miješani
 - "ecoPoints" is 1 per item
 - "co2Saved" is total CO2 savings in kg (estimate)
+- "tip" is a short, practical tip in English (1 sentence) — e.g. "Remove the cap and recycle it separately in plastic", "Rinse the bottle before disposing", "Flatten the box to save space", "Remove the metal lid from the jar". The tip should be specific to that item, not generic. If there's no special tip, explain which bin it goes in and why.
 - If no recognizable waste is found, return an empty items array
 - Do NOT add any text outside the JSON object`,
     scannerUserPrompt: 'Analyze this image and classify the waste.',
@@ -492,6 +552,7 @@ Your rules:
 - Do not use markdown formatting (bold, italic, lists with *) — write plain text
 - Be positive and motivate users to recycle
 - If the question is not related to waste/recycling, kindly redirect the conversation
+- ALWAYS give practical preparation tips — e.g. "Remove the cap from the bottle and recycle it separately", "Rinse the jar before disposing", "Flatten cardboard boxes". Users often don't know they need to disassemble items before disposal.
 
 ZAGREB WASTE SORTING SYSTEM:
 
