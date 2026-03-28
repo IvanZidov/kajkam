@@ -296,6 +296,15 @@ export default function ScannerScreen({ onShowHistory }: { onShowHistory?: () =>
                 {result.items.length > 0 ? t.scanner.analysisSuccess : t.scanner.noWasteDetected}
               </p>
 
+              {result.items.length === 0 && (
+                <div className="bg-surface-container-low shield-motif shadow-sm p-6 flex flex-col items-center gap-3 text-center">
+                  <div className="w-16 h-16 bg-on-surface-variant/10 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-8 h-8 text-on-surface-variant/60" />
+                  </div>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">{t.scanner.noWasteDescription}</p>
+                </div>
+              )}
+
               {result.items.map((item, idx) => (
                 <div key={idx} className={`bg-surface-container-low shield-motif border-l-8 ${BORDER_CLASSES[item.binColor]} shadow-sm overflow-hidden`}>
                   <div className="p-4 flex items-center justify-between">

@@ -242,6 +242,7 @@ export const hr: Translations = {
     tryAgain: 'Pokušaj Ponovo',
     analysisSuccess: 'Analiza Uspješna',
     noWasteDetected: 'Nema Prepoznatog Otpada',
+    noWasteDescription: 'Na slici nije pronađen otpad. Pokušaj s drugom fotografijom na kojoj je jasno vidljiv predmet za odlaganje.',
     geminiRecognized: (count) =>
       `Gemini je prepoznao ${count} ${count === 1 ? 'predmet' : 'predmeta'}`,
     disposeIn: 'Odloži u:',
@@ -516,6 +517,7 @@ export const en: Translations = {
     tryAgain: 'Try Again',
     analysisSuccess: 'Analysis Successful',
     noWasteDetected: 'No Waste Detected',
+    noWasteDescription: 'No waste was found in the image. Try again with a different photo where the item to dispose of is clearly visible.',
     geminiRecognized: (count) =>
       `Gemini recognized ${count} item${count === 1 ? '' : 's'}`,
     disposeIn: 'Dispose in:',
