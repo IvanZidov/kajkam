@@ -42,7 +42,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-surface-container flex items-stretch justify-center">
       {/* Phone-frame container */}
-      <div className="w-full max-w-[450px] flex flex-col relative bg-surface min-h-screen md:my-4 md:min-h-0 md:h-[calc(100vh-2rem)] md:shadow-2xl md:border md:border-outline-variant/20 md:rounded-2xl md:overflow-hidden">
+      <div className="w-full max-w-[450px] flex flex-col relative bg-surface h-dvh overflow-hidden md:my-4 md:min-h-0 md:h-[calc(100vh-2rem)] md:shadow-2xl md:border md:border-outline-variant/20 md:rounded-2xl md:overflow-hidden">
         <TopBar onInfoOpen={() => setShowInfo(true)} onLogoClick={() => handleTabChange('skener')} />
 
         <main className={`flex-1 pt-16 pb-20 hide-scrollbar flex flex-col ${!showInfo && !showScanHistory && currentTab === 'karta' ? 'overflow-hidden' : 'overflow-y-auto'}`}>

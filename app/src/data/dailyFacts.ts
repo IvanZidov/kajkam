@@ -11,8 +11,8 @@ export interface QuizQuestion {
 
 export const DAILY_FACTS: DailyFact[] = [
   {
-    hr: 'Kora od banane u bio otpadu postaje nova zemlja, a u miješanom je problem — razgrađuje se i stvara metan na odlagalištu.',
-    en: 'A banana peel in bio-waste becomes new soil, but in mixed waste it\'s a problem — it decomposes and produces methane at the landfill.',
+    hr: 'Tekstil i odjeću možeš donirati u Humana ili Crveni križ kontejnere po Zagrebu.',
+    en: 'You can donate textiles and clothing to Humana or Red Cross containers across Zagreb.',
   },
   {
     hr: 'Recikliranje jedne aluminijske limenke štedi dovoljno energije za rad TV-a 3 sata.',
@@ -111,8 +111,8 @@ export const DAILY_FACTS: DailyFact[] = [
     en: 'About 3.5 million tons of waste are produced globally every day.',
   },
   {
-    hr: 'Tekstil i odjeću možeš donirati u Humana ili Crveni križ kontejnere po Zagrebu.',
-    en: 'You can donate textiles and clothing to Humana or Red Cross containers across Zagreb.',
+    hr: 'Kora od banane u bio otpadu postaje nova zemlja, a u miješanom je problem — razgrađuje se i stvara metan na odlagalištu.',
+    en: 'A banana peel in bio-waste becomes new soil, but in mixed waste it\'s a problem — it decomposes and produces methane at the landfill.',
   },
   {
     hr: 'Recikliranjem plastike smanjujemo potrošnju nafte jer je plastika naftni derivat.',
