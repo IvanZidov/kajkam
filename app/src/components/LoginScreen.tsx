@@ -18,7 +18,7 @@ export default function LoginScreen() {
           className="absolute top-6 right-6 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
         >
           <Globe className="w-4 h-4 text-primary" />
-          <span className="text-xs font-bold text-primary uppercase">{language === 'hr' ? 'EN' : 'HR'}</span>
+          <span className="text-xs font-bold text-primary uppercase">{language === 'hr' ? 'HR' : 'EN'}</span>
         </button>
 
         <div className="w-full flex flex-col items-center text-center z-10">
