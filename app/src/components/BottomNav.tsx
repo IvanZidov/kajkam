@@ -15,7 +15,7 @@ export default function BottomNav({ currentTab, onTabChange }: BottomNavProps) {
   ] as const;
 
   return (
-    <nav className="absolute bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 bg-surface/90 backdrop-blur-xl z-50 shadow-[0_-4px_24px_-4px_rgba(0,68,130,0.06)]">
+    <nav className="absolute bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 bg-surface/90 backdrop-blur-xl z-50 shadow-[0_-4px_24px_-4px_rgba(0,68,130,0.06)] lg:hidden">
       {tabs.map(({ id, label, icon: Icon }) => {
         const isActive = currentTab === id;
         return (

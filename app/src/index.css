@@ -39,7 +39,7 @@
 }
 
 body {
-  background-color: var(--color-surface);
+  background-color: var(--color-surface-container);
   color: var(--color-on-surface);
   font-family: 'Inter', sans-serif;
   -webkit-tap-highlight-color: transparent;

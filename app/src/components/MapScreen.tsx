@@ -25,7 +25,7 @@ export default function MapScreen() {
       try {
         const response = await fetch('/zagreb_bins_locations.csv');
         const csvText = await response.text();
-        
+
         Papa.parse(csvText, {
           header: true,
           dynamicTyping: true,
@@ -60,7 +60,6 @@ export default function MapScreen() {
       minLng = Math.min(minLng, bin.Longitude);
       maxLng = Math.max(maxLng, bin.Longitude);
     });
-    // Add 5% padding
     const latPad = (maxLat - minLat) * 0.05;
     const lngPad = (maxLng - minLng) * 0.05;
     return {
@@ -104,8 +103,8 @@ export default function MapScreen() {
   const filteredBins = useMemo(() => {
     if (!filter) return bins;
     const lowerFilter = filter.toLowerCase();
-    return bins.filter(bin => 
-      (bin.Name || '').toLowerCase().includes(lowerFilter) || 
+    return bins.filter(bin =>
+      (bin.Name || '').toLowerCase().includes(lowerFilter) ||
       (bin.Location || '').toLowerCase().includes(lowerFilter) ||
       (bin.Bin_Type || '').toLowerCase().includes(lowerFilter)
     );
@@ -114,22 +113,22 @@ export default function MapScreen() {
   return (
     <div className="relative flex-1 w-full overflow-hidden">
       <div className="absolute inset-0 z-0 bg-surface-container-low">
-        <img 
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaW4W0os-Bo_NgYdpoqOQVO9REPLmSAM8cRyG4Rd__EjC06npfdZ37Q7i0lh1lwYIHuhUho1yydras-_ki3-NvXxeuP15DML1k-2jaCdPKs5mjBamwuaWp3dT7IQQzFhth8AJ4DoNI_3mB7hC9b4O_PQEFumrDxTSyLjQWW6yMt2ff1a0qoZyI7lppsNOF7U-xfmcp6kT62-r4eOKwJkphfk7MgCnZqOiX9eqLxu7jSjSgZhMSIS2w0wdZi43HWvTEk5wL9iPCbEzs" 
-          alt="Map" 
+        <img
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaW4W0os-Bo_NgYdpoqOQVO9REPLmSAM8cRyG4Rd__EjC06npfdZ37Q7i0lh1lwYIHuhUho1yydras-_ki3-NvXxeuP15DML1k-2jaCdPKs5mjBamwuaWp3dT7IQQzFhth8AJ4DoNI_3mB7hC9b4O_PQEFumrDxTSyLjQWW6yMt2ff1a0qoZyI7lppsNOF7U-xfmcp6kT62-r4eOKwJkphfk7MgCnZqOiX9eqLxu7jSjSgZhMSIS2w0wdZi43HWvTEk5wL9iPCbEzs"
+          alt="Map"
           className="w-full h-full object-cover opacity-60 grayscale-[0.2]"
         />
       </div>
 
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[90%] z-10">
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[90%] md:w-[70%] lg:w-[50%] lg:max-w-lg z-10">
         <div className="bg-surface-container-lowest shadow-lg flex items-center px-4 py-3 shield-motif">
           <Search className="text-outline w-5 h-5" />
-          <input 
-            type="text" 
-            placeholder="Pretraži ulicu ili vrstu..." 
+          <input
+            type="text"
+            placeholder="Pretraži ulicu ili vrstu..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="bg-transparent border-none focus:ring-0 focus:outline-none text-sm w-full ml-3 font-medium text-on-surface"
+            className="bg-transparent border-none focus:ring-0 focus:outline-none text-sm md:text-base w-full ml-3 font-medium text-on-surface"
           />
         </div>
       </div>
@@ -146,15 +145,13 @@ export default function MapScreen() {
         <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
           {filteredBins.map((bin, i) => {
             const isSelected = selectedBin?.OBJECTID === bin.OBJECTID;
-            // Only render a subset if there are too many to avoid massive lag, or render all as tiny dots
-            // We'll render them as small dots, and larger if selected
             return (
-              <div 
+              <div
                 key={bin.OBJECTID || i}
                 className={`absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer transition-all duration-300 ${isSelected ? 'z-30 scale-150' : 'z-10 hover:scale-125 hover:z-20'}`}
-                style={{ 
-                  top: `${getTop(bin.Latitude)}%`, 
-                  left: `${getLeft(bin.Longitude)}%` 
+                style={{
+                  top: `${getTop(bin.Latitude)}%`,
+                  left: `${getLeft(bin.Longitude)}%`
                 }}
                 onClick={() => setSelectedBin(bin)}
               >
@@ -184,16 +181,16 @@ export default function MapScreen() {
 
       {/* Bottom Sheet */}
       {selectedBin && (
-        <div className="absolute bottom-0 left-0 w-full z-30 px-4 pb-4 animate-in slide-in-from-bottom duration-300">
-          <div className="bg-surface-container-lowest shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.15)] shield-motif p-6 relative">
-            <button 
+        <div className="absolute bottom-0 left-0 w-full lg:w-96 lg:left-auto lg:right-6 lg:bottom-6 z-30 px-4 pb-4 lg:px-0 lg:pb-0 animate-in slide-in-from-bottom duration-300">
+          <div className="bg-surface-container-lowest shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.15)] lg:shadow-2xl shield-motif lg:rounded-2xl p-6 relative">
+            <button
               onClick={() => setSelectedBin(null)}
               className="absolute top-4 right-4 text-outline hover:text-on-surface"
             >
               ✕
             </button>
-            <div className="w-12 h-1 bg-surface-variant rounded-full mx-auto mb-6"></div>
-            
+            <div className="w-12 h-1 bg-surface-variant rounded-full mx-auto mb-6 lg:hidden"></div>
+
             <div className="flex justify-between items-start mb-4">
               <div className="pr-4">
                 <span className="text-[10px] font-bold text-primary tracking-widest uppercase mb-1 block">

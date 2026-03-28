@@ -13,7 +13,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       <div className="w-full flex flex-col items-center text-center z-10">
         <div className="mb-12">
           <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwwDTeCVpBkaARcp6yPTZUH7wKiblLAEW2Q1FNWS0zaObIN_ggN3DzIrtPw2bJNJU15d-mmG9uzZMdC1nWGyOLXwljjwBFGghqeF2e6UJj_j5LIWzF_bND0JN0WZN1BzgjHYtFEzoU3y-i8O6HZ0oma7rVAq3CnndvWixM7aIfiK_jKZpI_a3yl5wtJnyEaicOK4MQHh5RSLmzYIWxXq3GCzyHrRVlNUASXGIat93XN5O5FhxJLXMmc2ci6ue-FHK-9RG30etwVJzo" 
+            src="/logo.png" 
             alt="KAJKAMO? Logo" 
             className="w-32 h-32 object-contain"
           />
