@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HelpCircle, Trash2, Truck, Radio, LineChart, Leaf, Globe, BookOpen, MessageCircle, Gift, Camera, ArrowRight, AlertTriangle, Linkedin } from 'lucide-react';
+import { HelpCircle, Trash2, Truck, Radio, LineChart, Leaf, Globe, BookOpen, MessageCircle, Gift, Camera, ArrowRight, AlertTriangle, Linkedin, Code, Sparkles, Server, Database, MapPin, LogIn, Rocket, Building2, Palette, Bot, PenTool, ExternalLink } from 'lucide-react';
 
 const translations = {
   hr: {
@@ -24,7 +24,7 @@ const translations = {
     aboutJuricaName: 'Jurica Jurčec',
     aboutJuricaRole: 'Sales & Business Manager',
     aboutJuricaDesc: 'Radio je u eko industriji na proizvodnji postrojenja za recikliranje otpada. Iz prve ruke zna koliko pravilno sortiranje utječe na kvalitetu recikliranih proizvoda.',
-    aboutIvanName: 'Ivan Zidov',
+    aboutIvanName: 'Ivan Židov',
     aboutIvanRole: 'AI Developer',
     aboutIvanDesc: 'Razvija AI sustave koji građanima olakšavaju svakodnevne odluke — od prepoznavanja otpada do pametnih preporuka za sortiranje.',
 
@@ -86,9 +86,18 @@ const translations = {
     impactCard3Title: 'Čišći kvartovi',
     impactCard3Desc: 'Educirani građani bolje sortiraju, manje otpada završava na krivom mjestu, a parkovi i ulice ostaju čišći.',
 
+    // Tech
+    techLabel: 'TEHNOLOGIJE',
+    techHeading: 'Izgrađeno sa',
+    techDesc: 'Alati i tehnologije koje pokreću KAJ-KAM?',
+    techGroupDev: 'Razvoj & Dizajn',
+    techGroupAI: 'AI & Inteligencija',
+    techGroupInfra: 'Infrastruktura',
+    techGroupData: 'Podaci',
+
     // Footer
     footerCopy: '© 2026 KAJ-KAM? GRAD ZAGREB CIVIC TECH PROJECT. ALL RIGHTS RESERVED.',
-    footerTeam: 'BY TIM IME',
+    footerTeam: 'BY IVAN & JURICA',
   },
   en: {
     // Nav
@@ -112,7 +121,7 @@ const translations = {
     aboutJuricaName: 'Jurica Jurčec',
     aboutJuricaRole: 'Sales & Business Manager',
     aboutJuricaDesc: 'Worked in the eco industry manufacturing waste recycling facilities. He knows firsthand how proper sorting impacts the quality of recycled products.',
-    aboutIvanName: 'Ivan Zidov',
+    aboutIvanName: 'Ivan Židov',
     aboutIvanRole: 'AI Developer',
     aboutIvanDesc: 'Builds AI systems that help citizens make everyday decisions easier — from waste recognition to smart sorting recommendations.',
 
@@ -174,9 +183,18 @@ const translations = {
     impactCard3Title: 'Cleaner neighborhoods',
     impactCard3Desc: 'Educated citizens sort better, less waste ends up in the wrong place, and parks and streets stay cleaner.',
 
+    // Tech
+    techLabel: 'TECHNOLOGY',
+    techHeading: 'Built with',
+    techDesc: 'Tools and technologies powering KAJ-KAM?',
+    techGroupDev: 'Development & Design',
+    techGroupAI: 'AI & Intelligence',
+    techGroupInfra: 'Infrastructure',
+    techGroupData: 'Data Sources',
+
     // Footer
     footerCopy: '© 2026 KAJ-KAM? CITY OF ZAGREB CIVIC TECH PROJECT. ALL RIGHTS RESERVED.',
-    footerTeam: 'BY TIM IME',
+    footerTeam: 'BY IVAN & JURICA',
   },
 } as const;
 
@@ -206,16 +224,16 @@ export default function App() {
               <Globe className="w-4 h-4" strokeWidth={2} />
               {lang.toUpperCase()}
             </button>
-            <button className="bg-primary text-on-primary px-6 py-2 asymmetric-shield active:scale-95 duration-200 transition-opacity hover:opacity-80">
+            <a href="https://app.kajkam.net/" target="_blank" rel="noopener noreferrer" className="bg-primary text-on-primary px-6 py-2 asymmetric-shield active:scale-95 duration-200 transition-opacity hover:opacity-80">
               {t.navCta}
-            </button>
+            </a>
           </div>
         </div>
       </nav>
 
       <main className="pt-20">
         {/* Section 1: Hero */}
-        <section className="relative min-h-[921px] flex items-center overflow-hidden bg-surface pt-12">
+        <section className="relative min-h-[921px] flex items-center bg-surface pt-12 pb-20 lg:pb-24 overflow-x-hidden">
           <div className="max-w-7xl mx-auto px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 z-10">
               <div className="inline-block py-1 px-3 bg-secondary-fixed text-on-secondary-fixed text-xs font-bold tracking-[0.2em] uppercase mb-6 asymmetric-shield">
@@ -229,16 +247,16 @@ export default function App() {
                 {t.heroDesc}
               </p>
               <div className="flex flex-wrap gap-4">
-                <button className="bg-primary text-on-primary px-8 py-4 asymmetric-shield font-bold uppercase tracking-widest text-sm hover:opacity-90 transition-all active:scale-95">
+                <a href="https://app.kajkam.net/" target="_blank" rel="noopener noreferrer" className="bg-primary text-on-primary px-8 py-4 asymmetric-shield font-bold uppercase tracking-widest text-sm hover:opacity-90 transition-all active:scale-95">
                   {t.heroCta}
-                </button>
+                </a>
                 <a href="#kako-radi" className="inline-flex items-center justify-center bg-surface-container-highest text-primary px-8 py-4 asymmetric-shield font-bold uppercase tracking-widest text-sm hover:bg-surface-container-high transition-all active:scale-95">
                   {t.heroSecondary}
                 </a>
               </div>
             </div>
-            <div className="lg:col-span-5 relative flex items-center justify-center">
-              <div className="relative w-64 h-[540px] bg-on-surface rounded-[3rem] p-4 shadow-2xl">
+            <div className="lg:col-span-5 flex flex-col sm:flex-row items-center justify-center gap-10 lg:gap-12 shrink-0">
+              <div className="relative w-64 h-[540px] bg-on-surface rounded-[3rem] p-4 shadow-2xl shrink-0">
                 <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                   <img
                     alt="KAJ-KAM? App Preview"
@@ -246,6 +264,19 @@ export default function App() {
                     src={`${screenshots}/scan2.png`}
                   />
                 </div>
+              </div>
+              <div className="flex flex-col items-center justify-center gap-4 text-center shrink-0 w-full sm:w-auto sm:min-w-[11rem]">
+                <a
+                  href="https://app.kajkam.net/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-2xl bg-surface-container-lowest p-4 shadow-lg ring-1 ring-black/[0.06] asymmetric-shield leading-none transition-shadow hover:shadow-xl"
+                >
+                  <img src="/kajkamqr.svg" alt="QR code - try KAJ-KAM? app" className="size-40 sm:size-44 md:size-48 block" />
+                </a>
+                <span className="text-sm font-bold uppercase tracking-wide text-primary max-w-[14rem]">
+                  {lang === 'hr' ? 'Skeniraj QR i isprobaj aplikaciju' : 'Scan QR to try the app'}
+                </span>
               </div>
             </div>
           </div>
@@ -565,6 +596,137 @@ export default function App() {
             </div>
           </div>
         </section>
+        {/* Section 7: Technology Used */}
+        <section className="py-32 bg-surface-container-low">
+          <div className="max-w-7xl mx-auto px-8">
+            <div className="text-center mb-20">
+              <span className="text-secondary font-bold tracking-[0.3em] uppercase text-xs block mb-4">{t.techLabel}</span>
+              <h2 className="text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.techHeading}</h2>
+              <p className="text-on-surface-variant text-xl max-w-2xl mx-auto">{t.techDesc}</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+              {/* Development & Design */}
+              <div className="bg-surface-container-lowest p-8 asymmetric-shield">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-surface-container flex items-center justify-center asymmetric-shield">
+                    <Code className="text-primary w-5 h-5" strokeWidth={2} />
+                  </div>
+                  <h3 className="text-lg font-black text-primary uppercase tracking-tight">{t.techGroupDev}</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Rocket className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Cursor</span>
+                      <span className="text-on-surface-variant text-sm ml-2">{lang === 'hr' ? 'AI IDE za razvoj' : 'AI IDE for development'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Palette className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Google Stitch</span>
+                      <span className="text-on-surface-variant text-sm ml-2">{lang === 'hr' ? 'UI dizajn' : 'UI design'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <PenTool className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Google Nano Banana</span>
+                      <span className="text-on-surface-variant text-sm ml-2">{lang === 'hr' ? 'Dizajn logotipa' : 'Logo design'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI & Intelligence */}
+              <div className="bg-surface-container-lowest p-8 asymmetric-shield">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-surface-container flex items-center justify-center asymmetric-shield">
+                    <Sparkles className="text-primary w-5 h-5" strokeWidth={2} />
+                  </div>
+                  <h3 className="text-lg font-black text-primary uppercase tracking-tight">{t.techGroupAI}</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Bot className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Google Gemini</span>
+                      <span className="text-on-surface-variant text-sm ml-2">{lang === 'hr' ? 'AI prepoznavanje i chat' : 'AI recognition & chat'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <MapPin className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Google Maps API</span>
+                      <span className="text-on-surface-variant text-sm ml-2">{lang === 'hr' ? 'Interaktivne karte' : 'Interactive maps'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Infrastructure */}
+              <div className="bg-surface-container-lowest p-8 asymmetric-shield">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-surface-container flex items-center justify-center asymmetric-shield">
+                    <Server className="text-primary w-5 h-5" strokeWidth={2} />
+                  </div>
+                  <h3 className="text-lg font-black text-primary uppercase tracking-tight">{t.techGroupInfra}</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <LogIn className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Google Login</span>
+                      <span className="text-on-surface-variant text-sm ml-2">{lang === 'hr' ? 'Autentifikacija' : 'Authentication'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Database className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Supabase</span>
+                      <span className="text-on-surface-variant text-sm ml-2">{lang === 'hr' ? 'Baza podataka' : 'Database'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Globe className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Vercel</span>
+                      <span className="text-on-surface-variant text-sm ml-2">Deployment & hosting</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Data Sources */}
+              <div className="bg-surface-container-lowest p-8 asymmetric-shield">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-surface-container flex items-center justify-center asymmetric-shield">
+                    <Building2 className="text-primary w-5 h-5" strokeWidth={2} />
+                  </div>
+                  <h3 className="text-lg font-black text-primary uppercase tracking-tight">{t.techGroupData}</h3>
+                </div>
+                <div className="space-y-4">
+                  <a href="https://experience.arcgis.com/experience/f2b7df9552ea4525b64ceb78ba39876c/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
+                    <MapPin className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-on-surface group-hover:text-primary transition-colors">{lang === 'hr' ? 'Grad Zagreb' : 'City of Zagreb'}</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-primary/40 group-hover:text-primary transition-colors" strokeWidth={2} />
+                      <span className="text-on-surface-variant text-sm ml-0.5">{lang === 'hr' ? 'Javni dataset spremnika' : 'Public bins dataset'}</span>
+                    </div>
+                  </a>
+                  <div className="flex items-center gap-3">
+                    <Trash2 className="text-primary/60 w-5 h-5 shrink-0" strokeWidth={2} />
+                    <div>
+                      <span className="font-bold text-on-surface">Čistoća Zagreb</span>
+                      <span className="text-on-surface-variant text-sm ml-2">{lang === 'hr' ? 'Podaci o otpadu' : 'Waste data'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
@@ -573,10 +735,13 @@ export default function App() {
           <div className="font-headline text-xs tracking-wider uppercase opacity-70 text-[#004482]">
             {t.footerCopy}
           </div>
-          <div className="flex gap-8 font-headline text-xs tracking-wider uppercase opacity-70">
-            <a className="text-slate-500 hover:text-[#004482] hover:underline underline-offset-4 transition-all" href="#">PRIVACY</a>
-            <a className="text-slate-500 hover:text-[#004482] hover:underline underline-offset-4 transition-all" href="#">TERMS</a>
-            <a className="text-slate-500 hover:text-[#004482] hover:underline underline-offset-4 transition-all" href="#">CONTACT</a>
+          <div className="flex gap-6 items-center">
+            <a href="https://www.linkedin.com/in/ivan-zidov/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[#004482] transition-colors">
+              <Linkedin className="w-5 h-5" strokeWidth={2} />
+            </a>
+            <a href="https://www.linkedin.com/in/jurica-jur%C4%8Dec-0768981b7/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[#004482] transition-colors">
+              <Linkedin className="w-5 h-5" strokeWidth={2} />
+            </a>
           </div>
           <div className="font-bold text-[#004482] text-xs tracking-widest uppercase">
             {t.footerTeam}
