@@ -1,8 +1,8 @@
-# KajKam - AI-Powered Waste Management App for Zagreb
+# KAJ-KAM? - AI-Powered Waste Management App for Zagreb
 
 ## Project Overview
 
-KajKam ("Where to?" in Zagreb slang) is an AI-powered web app helping Zagreb citizens properly sort and dispose of waste. Built for a hackathon, it features AI waste recognition, an interactive bin map, a recycling chatbot, and gamification.
+KAJ-KAM? ("Where to?" in Zagreb slang) is an AI-powered web app helping Zagreb citizens properly sort and dispose of waste. Built for a hackathon, it features AI waste recognition, an interactive bin map, a recycling chatbot, and gamification.
 
 ## Project Structure
 

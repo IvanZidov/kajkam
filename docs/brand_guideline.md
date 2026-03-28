@@ -1,9 +1,9 @@
-# 🎨 KajKam - App Design Guidelines
+# 🎨 KAJ-KAM? - App Design Guidelines
 
 ## 1. Core Brand Identity & Logo
 The app’s visual identity is deeply tied to the official "Zagreb" branding concept, creating a feeling of an official, trustworthy, yet modern city utility.
 
-*   **App Name:** **KajKam** (Written as one word in text, or stacked as `KAJ?` over `KAM?` in the logo).
+*   **App Name:** **KAJ-KAM?** (Written as one word in text, or stacked as `KAJ?` over `KAM?` in the logo).
 *   **The Logo:** Use the generated "Idea 1" logo. It consists of the open top-box with stacked text, the downward arrow, the monoline bottle/paper, and the bottom "smile" curve.
 *   **The Shape Motif:** The "broken box" and the "smile curve" are your primary brand shapes. You can use the bottom curve as a subtle background watermark on empty states or loading screens.
 

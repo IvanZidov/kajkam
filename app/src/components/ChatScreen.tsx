@@ -1,43 +1,47 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Info, Bot, Send, Leaf, Loader2 } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
+import { useTranslation } from '../i18n/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 interface Message {
   role: 'user' | 'assistant';
   text: string;
 }
 
-const SYSTEM_PROMPT = `Ti si "ZG Eko-Asistent", prijateljski chatbot za pomoć građanima Zagreba s recikliranjem i sortiranjem otpada.
-
-Tvoja pravila:
-- Odgovaraj ISKLJUČIVO na hrvatskom jeziku (zagrebački govor je poželjan)
-- Budi koncizan — odgovori u 2-4 rečenice osim ako korisnik traži detalje
-- Poznaj zagrebački sustav sortiranja otpada:
-  • Žuti spremnik: plastika, metal, limenke, tetrapak
-  • Plavi spremnik: papir, karton, novine
-  • Smeđi spremnik: biootpad, hrana, biljni ostaci
-  • Zeleni spremnik: staklo
-  • Crni/sivi spremnik: miješani komunalni otpad
-- Poznaj lokacije reciklažnih dvorišta u Zagrebu
-- Ako ne znaš točnu lokaciju, predloži da korisnik provjeri na karti u aplikaciji
-- Budi pozitivan i motiviraj korisnike na recikliranje
-- Ako pitanje nije vezano za otpad/recikliranje, ljubazno preusmjeri razgovor
-- Ne koristi markdown formatiranje (bold, italic, liste s *) — piši čisti tekst`;
-
-const QUICK_PROMPTS = [
-  'Kamo idu baterije?',
-  'Što je glomazni otpad?',
-  'Čašice od jogurta?',
-];
-
 export default function ChatScreen() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+
+  const quickPrompts = useMemo(() => [
+    t.chat.quickPrompt1,
+    t.chat.quickPrompt2,
+    t.chat.quickPrompt3,
+  ], [t]);
+
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', text: 'Bok! Ja sam tvoj ZG Eko-Asistent. Kako ti mogu pomoći s recikliranjem danas?' },
+    { role: 'assistant', text: t.chat.welcomeMessage },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Load chat history from database
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('chat_messages')
+      .select('role, text')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: true })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setMessages(data.map(m => ({ role: m.role as 'user' | 'assistant', text: m.text })));
+        }
+      });
+  }, [user]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -53,13 +57,19 @@ export default function ChatScreen() {
     setInput('');
     setIsLoading(true);
 
+    // Persist user message
+    if (user) {
+      supabase.from('chat_messages').insert({ user_id: user.id, role: 'user', text: trimmed })
+        .then(({ error }) => { if (error) console.error('chat insert error:', error); });
+    }
+
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
       // Build conversation history for context
       const contents = [
-        { role: 'user' as const, parts: [{ text: SYSTEM_PROMPT }] },
-        { role: 'model' as const, parts: [{ text: 'Razumijem, ja sam ZG Eko-Asistent. Kako ti mogu pomoći?' }] },
+        { role: 'user' as const, parts: [{ text: t.ai.chatSystemPrompt }] },
+        { role: 'model' as const, parts: [{ text: t.ai.chatAck }] },
         ...updatedMessages.map((m) => ({
           role: (m.role === 'assistant' ? 'model' : 'user') as 'user' | 'model',
           parts: [{ text: m.text }],
@@ -71,11 +81,16 @@ export default function ChatScreen() {
         contents,
       });
 
-      const reply = response.text?.trim() ?? 'Oprosti, nisam uspio odgovoriti. Pokušaj ponovo.';
+      const reply = response.text?.trim() ?? t.chat.fallbackError;
       setMessages((prev) => [...prev, { role: 'assistant', text: reply }]);
+      // Persist assistant reply
+      if (user) {
+        supabase.from('chat_messages').insert({ user_id: user.id, role: 'assistant', text: reply })
+          .then(({ error }) => { if (error) console.error('chat insert error:', error); });
+      }
     } catch (err) {
       console.error('Gemini chat error:', err);
-      setMessages((prev) => [...prev, { role: 'assistant', text: 'Ups, došlo je do greške. Pokušaj ponovo.' }]);
+      setMessages((prev) => [...prev, { role: 'assistant', text: t.chat.errorMessage }]);
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
@@ -90,59 +105,59 @@ export default function ChatScreen() {
   return (
     <div className="flex flex-col flex-1">
       <div className="px-4 md:px-6 py-4">
-        <div className="bg-primary-container text-on-primary px-4 py-3 shield-motif flex items-center justify-between shadow-sm lg:max-w-2xl lg:mx-auto">
+        <div className="bg-primary-container text-on-primary px-4 py-3 shield-motif flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
             <Leaf className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wider">ZG Eko-Asistent — Powered by Gemini</span>
+            <span className="text-xs font-bold uppercase tracking-wider">{t.chat.banner}</span>
           </div>
           <Info className="w-5 h-5 text-secondary" />
         </div>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-6 space-y-6 pb-4 hide-scrollbar lg:max-w-2xl lg:mx-auto lg:w-full">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-6 space-y-6 pb-4 hide-scrollbar">
         {messages.map((msg, idx) =>
           msg.role === 'assistant' ? (
-            <div key={idx} className="flex flex-col items-start max-w-[85%] md:max-w-[75%] lg:max-w-[60%]">
+            <div key={idx} className="flex flex-col items-start max-w-[85%] md:max-w-[75%]">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-outline">ZG Eko-Asistent</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-outline">{t.chat.assistantLabel}</span>
               </div>
               <div className="bg-surface-container-low text-on-surface p-4 shield-motif text-sm leading-relaxed">
                 {msg.text}
               </div>
             </div>
           ) : (
-            <div key={idx} className="flex flex-col items-end max-w-[85%] md:max-w-[75%] lg:max-w-[60%] self-end">
+            <div key={idx} className="flex flex-col items-end max-w-[85%] md:max-w-[75%] self-end">
               <div className="bg-primary text-white p-4 shield-motif text-sm leading-relaxed shadow-md">
                 {msg.text}
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-outline mt-1 mr-2">Dostavljeno</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-outline mt-1 mr-2">{t.chat.delivered}</span>
             </div>
           )
         )}
 
         {isLoading && (
-          <div className="flex flex-col items-start max-w-[85%] md:max-w-[75%] lg:max-w-[60%]">
+          <div className="flex flex-col items-start max-w-[85%] md:max-w-[75%]">
             <div className="flex items-center gap-2 mb-1">
               <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
                 <Bot className="w-3.5 h-3.5 text-white" />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-outline">ZG Eko-Asistent</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-outline">{t.chat.assistantLabel}</span>
             </div>
             <div className="bg-surface-container-low text-on-surface p-4 shield-motif text-sm flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
-              <span className="text-on-surface-variant italic">Razmišljam...</span>
+              <span className="text-on-surface-variant italic">{t.chat.thinkingMessage}</span>
             </div>
           </div>
         )}
       </div>
 
       <div className="px-4 md:px-6 pb-4 pt-2 bg-surface">
-        <div className="lg:max-w-2xl lg:mx-auto">
+        <div className="lg:max-w-3xl lg:mx-auto">
           <div className="flex gap-2 overflow-x-auto hide-scrollbar mb-4 pb-1">
-            {QUICK_PROMPTS.map((prompt) => (
+            {quickPrompts.map((prompt) => (
               <button
                 key={prompt}
                 onClick={() => sendMessage(prompt)}
@@ -161,7 +176,7 @@ export default function ChatScreen() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Pitaj nešto..."
+                placeholder={t.chat.placeholder}
                 disabled={isLoading}
                 className="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-on-surface placeholder:text-outline disabled:opacity-50"
               />

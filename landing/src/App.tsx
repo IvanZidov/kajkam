@@ -7,7 +7,7 @@ export default function App() {
       <nav className="fixed top-0 w-full z-50 bg-[#FBF9F8]/80 backdrop-blur-xl shadow-sm">
         <div className="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
           <div className="text-2xl font-black tracking-tighter text-[#004482]">
-            KAJKAMO?
+            KAJ-KAM?
           </div>
           <div className="hidden md:flex gap-8 items-center font-headline font-bold tracking-[0.08em] uppercase text-sm">
             <a className="text-slate-600 hover:text-[#004482] transition-colors" href="#problem">PROBLEM</a>
@@ -29,7 +29,7 @@ export default function App() {
                 ZAGREB SMART CITY PROJECT
               </div>
               <h1 className="text-6xl md:text-8xl font-black text-primary uppercase editorial-line-height tracking-tighter mb-6">
-                KajKamo?<br />
+                KAJ-KAM?<br />
                 <span className="text-on-surface-variant">Tvoj AI vodič</span>
               </h1>
               <p className="text-xl md:text-2xl text-on-surface-variant mb-10 max-w-xl leading-relaxed">
@@ -47,7 +47,7 @@ export default function App() {
             <div className="lg:col-span-5 relative">
               <div className="asymmetric-shield bg-gradient-to-br from-primary to-primary-container p-4 shadow-2xl overflow-hidden aspect-[4/5] flex items-center justify-center">
                 <img 
-                  alt="KajKamo App Preview" 
+                  alt="KAJ-KAM? App Preview" 
                   className="w-full h-full object-cover asymmetric-shield" 
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQaXnIvXyr6BvFpG_Cx4KRD_vqcc_x0CI42JZ4sYES4wM6-T6M6QVE9BWzHHnUsMSSTPsOoNATjgA-WYg0mHVeeXPpd23BAY54SOt37f54AFq0GqIqrD97sRAf4VWzjSJ78TUcMCGyKb3w9xnnpVz8IhBN4gyKZ6-JGICLzGmofGZHXbuEaOo09xuCdglmVcFD06tPqBckg9SqZZrZOVEtTZMMIYZUEk5JmTXDMEbxZnDHZgjYNTnCKPaz73zFQsSqhKMMnf3LCagk"
                   referrerPolicy="no-referrer"
@@ -243,7 +243,7 @@ export default function App() {
       <footer className="w-full border-t border-[#004482]/15 bg-[#FBF9F8]">
         <div className="flex flex-col md:flex-row justify-between items-center py-12 px-8 max-w-7xl mx-auto gap-4">
           <div className="font-headline text-xs tracking-wider uppercase opacity-70 text-[#004482]">
-            © 2026 KAJKAMO? GRAD ZAGREB CIVIC TECH PROJECT. ALL RIGHTS RESERVED.
+            © 2026 KAJ-KAM? GRAD ZAGREB CIVIC TECH PROJECT. ALL RIGHTS RESERVED.
           </div>
           <div className="flex gap-8 font-headline text-xs tracking-wider uppercase opacity-70">
             <a className="text-slate-500 hover:text-[#004482] hover:underline underline-offset-4 transition-all" href="#">PRIVACY</a>

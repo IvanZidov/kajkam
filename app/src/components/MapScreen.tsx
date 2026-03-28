@@ -1,12 +1,15 @@
-import { Search, Trash2, FileText, Recycle, Leaf, Factory, Navigation, AlertTriangle, Loader2, LocateFixed, X, MapPin } from 'lucide-react';
+import { Search, Trash2, FileText, Recycle, Leaf, Factory, Navigation, AlertTriangle, Loader2, LocateFixed, X, MapPin, Check } from 'lucide-react';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Papa from 'papaparse';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface BinLocation {
   OBJECTID: string;
@@ -32,15 +35,6 @@ const BIN_COLORS: Record<string, string> = {
   bio: '#705d00',
   'reciklažna': '#BB0400',
 };
-
-const FILTER_CHIPS = [
-  { id: 'nearby', label: 'Blizu mene', icon: LocateFixed },
-  { id: 'reciklažna', label: 'Reciklažna dvorišta', icon: Factory },
-  { id: 'plastika', label: 'Plastika', icon: Recycle },
-  { id: 'papir', label: 'Papir', icon: FileText },
-  { id: 'staklo', label: 'Staklo', icon: Trash2 },
-  { id: 'bio', label: 'Bio', icon: Leaf },
-] as const;
 
 function getBinColorHex(type: string): string {
   const t = type.toLowerCase();
@@ -163,6 +157,20 @@ function MapResizer() {
 }
 
 export default function MapScreen() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const [reportingBin, setReportingBin] = useState(false);
+  const [reportSuccess, setReportSuccess] = useState(false);
+
+  const filterChips = useMemo(() => [
+    { id: 'nearby', label: t.map.nearMe, icon: LocateFixed },
+    { id: 'reciklažna', label: t.map.recyclingYards, icon: Factory },
+    { id: 'plastika', label: t.map.plastics, icon: Recycle },
+    { id: 'papir', label: t.map.paper, icon: FileText },
+    { id: 'staklo', label: t.map.glass, icon: Trash2 },
+    { id: 'bio', label: t.map.bio, icon: Leaf },
+  ], [t]);
+
   const [selectedBin, setSelectedBin] = useState<BinLocation | null>(null);
   const [bins, setBins] = useState<BinLocation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -189,8 +197,8 @@ export default function MapScreen() {
               .filter(row => row.Latitude && row.Longitude)
               .map(row => ({
                 ...row,
-                Bin_Type: row.Bin_Type || 'Nepoznato',
-                Name: row.Name || row.Location || 'Spremnik',
+                Bin_Type: row.Bin_Type || t.map.unknown,
+                Name: row.Name || row.Location || t.map.binDefault,
               })) as BinLocation[];
             setBins(validBins);
             setLoading(false);
@@ -203,7 +211,7 @@ export default function MapScreen() {
     };
 
     fetchBins();
-  }, []);
+  }, [t]);
 
   // Get user location on mount
   useEffect(() => {
@@ -335,7 +343,7 @@ export default function MapScreen() {
           <Search className="text-outline w-5 h-5 shrink-0" />
           <input
             type="text"
-            placeholder="Pretraži ulicu ili vrstu..."
+            placeholder={t.map.searchPlaceholder}
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="bg-transparent border-none focus:ring-0 focus:outline-none text-sm w-full ml-3 font-medium text-on-surface"
@@ -349,7 +357,7 @@ export default function MapScreen() {
 
         {/* Filter chips */}
         <div className="mt-2 flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-          {FILTER_CHIPS.map(({ id, label, icon: Icon }) => {
+          {filterChips.map(({ id, label, icon: Icon }) => {
             const isActive = activeChip === id;
             return (
               <button
@@ -370,7 +378,7 @@ export default function MapScreen() {
 
         {filter && (
           <div className="mt-1 text-xs text-center text-outline font-medium">
-            {filteredBins.length} rezultata
+            {t.map.results(filteredBins.length)}
           </div>
         )}
       </div>
@@ -380,7 +388,7 @@ export default function MapScreen() {
         <div className="absolute inset-0 z-[1000] flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-sm">
           <div className="flex flex-col items-center text-primary">
             <Loader2 className="w-8 h-8 animate-spin mb-2" />
-            <span className="font-bold tracking-widest uppercase text-xs">Učitavanje karte...</span>
+            <span className="font-bold tracking-widest uppercase text-xs">{t.map.loadingMap}</span>
           </div>
         </div>
       ) : (
@@ -406,7 +414,7 @@ export default function MapScreen() {
             {userLocation && (
               <Marker position={userLocation} icon={createUserIcon()}>
                 <Popup>
-                  <span className="font-bold text-sm">Tvoja lokacija</span>
+                  <span className="font-bold text-sm">{t.map.yourLocation}</span>
                 </Popup>
               </Marker>
             )}
@@ -458,7 +466,7 @@ export default function MapScreen() {
           </MapContainer>
 
           {/* Locate user button */}
-          <div className="absolute bottom-32 lg:bottom-8 right-4 z-[1000] flex flex-col gap-3">
+          <div className="absolute bottom-28 right-4 z-[1000] flex flex-col gap-3">
             <button
               onClick={handleLocateButton}
               disabled={locatingUser}
@@ -476,10 +484,10 @@ export default function MapScreen() {
 
       {/* Nearby bins list */}
       {showNearbyList && (
-        <div className="absolute bottom-20 lg:bottom-4 left-0 right-0 lg:left-4 lg:right-auto lg:w-96 z-[1000] px-4 lg:px-0">
+        <div className="absolute bottom-20 left-0 right-0 z-[1000] px-4">
           <div className="bg-surface-container-lowest shadow-[0_-4px_30px_-8px_rgba(0,0,0,0.15)] shield-motif p-4 space-y-1">
             <p className="text-[10px] font-bold text-primary tracking-widest uppercase mb-2">
-              Najbliži spremnici
+              {t.map.nearestBins}
             </p>
             {nearbyBins.map(({ bin, distance }) => (
               <button
@@ -507,20 +515,20 @@ export default function MapScreen() {
 
       {/* Bottom Sheet - selected bin details */}
       {selectedBin && (
-        <div className="absolute bottom-20 lg:bottom-4 left-0 right-0 lg:right-auto lg:left-4 lg:w-96 z-[1000] px-4 lg:px-0">
-          <div className="bg-surface-container-lowest shadow-[0_-4px_30px_-8px_rgba(0,0,0,0.15)] lg:shadow-2xl shield-motif lg:rounded-2xl p-5 relative">
+        <div className="absolute bottom-20 left-0 right-0 z-[1000] px-4">
+          <div className="bg-surface-container-lowest shadow-[0_-4px_30px_-8px_rgba(0,0,0,0.15)] shield-motif p-5 relative">
             <button
               onClick={() => setSelectedBin(null)}
               className="absolute top-3 right-3 text-outline hover:text-on-surface p-1"
             >
               <X className="w-5 h-5" />
             </button>
-            <div className="w-10 h-1 bg-surface-variant rounded-full mx-auto mb-4 lg:hidden"></div>
+            <div className="w-10 h-1 bg-surface-variant rounded-full mx-auto mb-4"></div>
 
             <div className="flex justify-between items-start mb-3 pr-6">
               <div className="min-w-0 flex-1">
                 <span className="text-[10px] font-bold text-primary tracking-widest uppercase mb-0.5 block">
-                  {selectedBin.District || 'Lokacija Spremnika'}
+                  {selectedBin.District || t.map.binLocation}
                 </span>
                 <h2 className="text-base font-black text-on-surface tracking-tight uppercase leading-tight line-clamp-2">
                   {selectedBin.Location || selectedBin.Name}
@@ -542,11 +550,11 @@ export default function MapScreen() {
 
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className={`bg-surface-container-low p-3 shield-motif border-l-4 ${getBinColorClass(selectedBin.Bin_Type).replace('bg-', 'border-')}`}>
-                <p className="text-[10px] font-bold text-outline uppercase mb-0.5">Vrsta otpada</p>
+                <p className="text-[10px] font-bold text-outline uppercase mb-0.5">{t.map.wasteType}</p>
                 <p className="text-sm font-bold text-on-surface line-clamp-1">{selectedBin.Bin_Type}</p>
               </div>
               <div className="bg-surface-container-low p-3 shield-motif">
-                <p className="text-[10px] font-bold text-outline uppercase mb-0.5">Spremnik</p>
+                <p className="text-[10px] font-bold text-outline uppercase mb-0.5">{t.map.container}</p>
                 <p className="text-sm font-bold text-on-surface line-clamp-1">{selectedBin.Container_Type || 'Standard'}</p>
               </div>
             </div>
@@ -557,13 +565,41 @@ export default function MapScreen() {
               className="w-full bg-primary text-white font-black py-3.5 tracking-widest shield-motif active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase text-xs"
             >
               <Navigation className="w-4 h-4" />
-              Navigiraj
+              {t.map.navigate}
             </button>
 
             {/* Report problem - secondary action */}
-            <button className="w-full mt-2 text-outline hover:text-on-surface font-bold py-2 flex items-center justify-center gap-1.5 uppercase text-[10px] tracking-widest transition-colors">
-              <AlertTriangle className="w-3.5 h-3.5" />
-              Prijavi problem
+            <button
+              disabled={reportingBin || reportSuccess || !user}
+              onClick={async () => {
+                if (!user || !selectedBin) return;
+                setReportingBin(true);
+                await supabase.from('bin_reports').insert({
+                  user_id: user.id,
+                  bin_object_id: selectedBin.OBJECTID,
+                  bin_name: selectedBin.Name,
+                  bin_location: selectedBin.Location,
+                  bin_type: selectedBin.Bin_Type,
+                  latitude: selectedBin.Latitude,
+                  longitude: selectedBin.Longitude,
+                });
+                await supabase.rpc('increment_eko_bodovi', { points: 5 });
+                setReportingBin(false);
+                setReportSuccess(true);
+                setTimeout(() => setReportSuccess(false), 3000);
+              }}
+              className={`w-full mt-2 font-bold py-2 flex items-center justify-center gap-1.5 uppercase text-[10px] tracking-widest transition-colors ${
+                reportSuccess ? 'text-green-600' : 'text-outline hover:text-on-surface'
+              } disabled:opacity-50`}
+            >
+              {reportingBin ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : reportSuccess ? (
+                <Check className="w-3.5 h-3.5" />
+              ) : (
+                <AlertTriangle className="w-3.5 h-3.5" />
+              )}
+              {reportSuccess ? 'Prijavljeno! +5 EkoBodova' : t.map.reportProblem}
             </button>
           </div>
         </div>

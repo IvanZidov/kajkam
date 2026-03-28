@@ -6,10 +6,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import kajKamoLogo from '../../logo/logo.png';
+import kajKamLogo from '../../logo/logo.png';
 
-const LogoMark = ({ className, alt = 'KajKamo' }: { className?: string; alt?: string }) => (
-  <img src={kajKamoLogo} alt={alt} className={`object-contain object-center ${className ?? ''}`} draggable={false} />
+const LogoMark = ({ className, alt = 'KAJ-KAM?' }: { className?: string; alt?: string }) => (
+  <img src={kajKamLogo} alt={alt} className={`object-contain object-center ${className ?? ''}`} draggable={false} />
 );
 
 const Header = () => (
@@ -77,7 +77,7 @@ const Slide1 = () => {
 
           {/* Main Headline */}
           <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-black text-primary tracking-tighter leading-none font-headline uppercase mb-6 md:mb-8">
-            KAJKAMO?
+            KAJ-KAM?
           </h1>
 
           {/* Subtitle with Scale Jump */}
@@ -202,7 +202,7 @@ const Slide2 = () => {
                   <div className="bg-on-primary rounded-lg p-1 shrink-0 ring-1 ring-on-primary/20">
                     <LogoMark className="h-8 w-8" alt="" />
                   </div>
-                  <span className="text-on-primary font-black tracking-tighter text-lg truncate">KAJKAMO?</span>
+                  <span className="text-on-primary font-black tracking-tighter text-lg truncate">KAJ-KAM?</span>
                 </div>
                 <span className="material-symbols-outlined text-on-primary shrink-0">qr_code_scanner</span>
               </div>
@@ -239,7 +239,7 @@ const Slide2 = () => {
           {/* Explanation Text */}
           <div className="flex-1 space-y-6">
             <p className="text-on-surface-variant text-lg md:text-xl leading-relaxed italic">
-              "KajKamo? leverages AI-driven scanning and real-time civic data to bridge the gap between citizens and sustainable city management."
+              "KAJ-KAM? leverages AI-driven scanning and real-time civic data to bridge the gap between citizens and sustainable city management."
             </p>
             <ul className="space-y-4">
               <li className="flex items-center gap-3">
@@ -527,7 +527,7 @@ const Slide9 = () => (
           <LogoMark className="h-16 w-auto md:h-20" />
         </div>
         <p className="text-primary font-bold uppercase tracking-[0.15em] text-sm text-center">
-          KajKamo? — hvala žiriju
+          KAJ-KAM? — hvala žiriju
         </p>
       </div>
     </div>

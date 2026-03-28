@@ -3,7 +3,7 @@ Ovo je prva stranica koju žiri vidi kad otvori vaš link. Treba biti moderna, r
 
 **Sekcije i funkcionalnosti:**
 *   **Hero Sekcija (Prvi dojam):**
-    *   Veliki, upečatljiv naslov (npr. *"KajKamo? - Tvoj AI vodič za čisti Zagreb"*).
+    *   Veliki, upečatljiv naslov (npr. *"KAJ-KAM? - Tvoj AI vodič za čisti Zagreb"*).
     *   Kratki podnaslov: *"Slikaj otpad, pronađi najbližu kantu i osvoji besplatne ZG vrećice."*
     *   **Call-to-Action (CTA) gumbi:** Glavni gumb *"Isprobaj aplikaciju"* (vodi direktno u Web App) i sekundarni gumb *"Kako radi?"* (skrola dolje).
 *   **Sekcija "Problem" (Zašto ovo radimo):**

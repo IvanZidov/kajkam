@@ -15,7 +15,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const GUEST_KEY = 'kajkamo_guest';
+const GUEST_KEY = 'kajkam_guest';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -39,6 +39,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session) {
         localStorage.removeItem(GUEST_KEY);
         setIsGuest(false);
+        // Ensure profile exists (handles users created before the trigger)
+        const u = session.user;
+        supabase.from('profiles').upsert({
+          id: u.id,
+          display_name: u.user_metadata?.full_name ?? u.email?.split('@')[0],
+          avatar_url: u.user_metadata?.avatar_url,
+        }, { onConflict: 'id', ignoreDuplicates: true })
+          .then(({ error }) => { if (error) console.error('profile upsert error:', error); });
       }
     });
 

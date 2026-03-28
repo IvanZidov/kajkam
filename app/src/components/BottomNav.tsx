@@ -1,5 +1,6 @@
 import { Camera, Map as MapIcon, MessageSquare, User } from 'lucide-react';
 import { Tab } from '../App';
+import { useTranslation } from '../i18n/LanguageContext';
 
 interface BottomNavProps {
   currentTab: Tab;
@@ -7,15 +8,16 @@ interface BottomNavProps {
 }
 
 export default function BottomNav({ currentTab, onTabChange }: BottomNavProps) {
+  const { t } = useTranslation();
   const tabs = [
-    { id: 'skener', label: 'Skener', icon: Camera },
-    { id: 'karta', label: 'Karta', icon: MapIcon },
-    { id: 'chat', label: 'Chat', icon: MessageSquare },
-    { id: 'profil', label: 'Profil', icon: User },
+    { id: 'skener', label: t.nav.scanner, icon: Camera },
+    { id: 'karta', label: t.nav.map, icon: MapIcon },
+    { id: 'chat', label: t.nav.chat, icon: MessageSquare },
+    { id: 'profil', label: t.nav.profile, icon: User },
   ] as const;
 
   return (
-    <nav className="absolute bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 bg-surface/90 backdrop-blur-xl z-50 shadow-[0_-4px_24px_-4px_rgba(0,68,130,0.06)] lg:hidden">
+    <nav className="absolute bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 bg-surface/90 backdrop-blur-xl z-50 shadow-[0_-4px_24px_-4px_rgba(0,68,130,0.06)]">
       {tabs.map(({ id, label, icon: Icon }) => {
         const isActive = currentTab === id;
         return (
@@ -23,8 +25,8 @@ export default function BottomNav({ currentTab, onTabChange }: BottomNavProps) {
             key={id}
             onClick={() => onTabChange(id)}
             className={`flex flex-col items-center justify-center w-16 h-16 transition-all duration-200 ${
-              isActive 
-                ? 'text-primary border-t-2 border-primary' 
+              isActive
+                ? 'text-primary border-t-2 border-primary'
                 : 'text-outline hover:text-primary/70'
             }`}
           >
