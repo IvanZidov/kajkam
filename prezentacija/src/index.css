@@ -3,6 +3,23 @@
 
 @import "tailwindcss";
 
+@layer base {
+  html,
+  body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+  }
+
+  #root {
+    height: 100%;
+    min-height: 100dvh;
+    min-height: 100svh;
+  }
+}
+
 @theme {
   --color-primary: #004482;
   --color-primary-container: #005bab;
@@ -28,6 +45,25 @@
     border-top-right-radius: 0px !important;
     border-bottom-left-radius: 16px !important;
     border-bottom-right-radius: 16px !important;
+  }
+
+  /** Slides taller than viewport: scroll inside slide, not the page */
+  .slide-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 68, 130, 0.4) transparent;
+  }
+
+  .slide-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .slide-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 68, 130, 0.35);
+    border-radius: 999px;
+  }
+
+  .slide-scroll::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 

@@ -5,27 +5,40 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import kajKamLogo from '../../logo/logo.png';
+import { Briefcase, ChevronLeft, ChevronRight, Cpu, Mail } from 'lucide-react';
+import kajKamoLogo from '../../logo/logo.png';
 
-const LogoMark = ({ className, alt = 'KAJ-KAM?' }: { className?: string; alt?: string }) => (
-  <img src={kajKamLogo} alt={alt} className={`object-contain object-center ${className ?? ''}`} draggable={false} />
+const LogoMark = ({ className, alt = 'Kaj-Kam' }: { className?: string; alt?: string }) => (
+  <img src={kajKamoLogo} alt={alt} className={`object-contain object-center ${className ?? ''}`} draggable={false} />
 );
 
+/** Fills flex main; vertical scroll inside slide when content is taller than viewport. */
+const slideFrame =
+  'slide-scroll h-full min-h-0 w-full scroll-pb-32 overflow-y-auto overflow-x-hidden overscroll-y-contain pt-16 pb-[8.5rem] sm:pt-20 sm:pb-36 md:pb-40 max-[380px]:pt-14 max-[380px]:pb-[7.5rem]';
+
+const pressAsset = (file: string) => `${import.meta.env.BASE_URL}press/${file}`;
+
+const pressScreenshots: { file: string; alt: string }[] = [
+  { file: 'press-01.png', alt: 'News: Zagreb waste plan to 2029 and heated political debate' },
+  { file: 'press-03.png', alt: 'TV coverage: Zagreb waste struggle and overflowing recycling bins' },
+  { file: 'press-04.png', alt: 'Headline on poor street waste conditions in Zagreb' },
+  { file: 'press-05.png', alt: 'Article on bio-waste recycling and regulatory blockages' },
+  { file: 'press-06.png', alt: 'Report: landfill transition and criticism of the waste plan' },
+  { file: 'press-07.png', alt: 'Residents and new pay-as-you-throw waste charging in Zagreb' },
+];
+
 const Header = () => (
-  <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-6 bg-surface/80 backdrop-blur-md">
-    <div className="flex items-center gap-3 md:gap-4 min-w-0">
-      <LogoMark className="h-9 w-9 md:h-11 md:w-11 shrink-0" />
-      <div className="text-lg md:text-2xl font-black tracking-tighter text-primary truncate">ZAGREB INNOVATE</div>
+  <header className="fixed top-0 left-0 z-50 flex w-full flex-wrap items-center justify-between gap-3 bg-surface/80 px-6 py-4 backdrop-blur-md md:gap-4 md:px-12 md:py-5">
+    <div className="flex min-w-0 max-w-[min(100%,28rem)] flex-1 items-center gap-3 md:gap-5">
+      <LogoMark className="h-9 w-9 shrink-0 md:h-11 md:w-11" />
+      <div className="min-w-0 truncate text-lg font-black tracking-tighter text-primary md:text-2xl">ZAGREB INNOVATE</div>
     </div>
-    <nav className="hidden md:flex gap-12 items-center">
-      <a className="text-primary border-b-2 border-primary pb-1 font-sans uppercase tracking-widest font-bold hover:opacity-80 transition-opacity" href="#">VISION</a>
-      <a className="text-slate-500 font-medium hover:text-primary font-sans uppercase tracking-widest font-bold transition-opacity" href="#">IMPACT</a>
-      <a className="text-slate-500 font-medium hover:text-primary font-sans uppercase tracking-widest font-bold transition-opacity" href="#">TEAM</a>
-    </nav>
-    <button className="bg-primary text-on-primary px-6 md:px-8 py-3 signature-motif font-bold tracking-widest uppercase hover:opacity-90 active:scale-95 transition-all text-sm md:text-base">
-      VOTE NOW
-    </button>
+    <div className="flex shrink-0 items-center gap-3 bg-surface-container-low px-4 py-2 signature-motif md:gap-4 md:px-6">
+      <span className="material-symbols-outlined shrink-0 text-xl text-primary md:text-2xl">shield</span>
+      <span className="font-sans text-[10px] font-bold uppercase tracking-[0.18em] text-primary sm:text-xs sm:tracking-[0.2em] md:text-sm">
+        HACKATHON EDITION 2026
+      </span>
+    </div>
   </header>
 );
 
@@ -33,7 +46,7 @@ const Footer = () => (
   <footer className="fixed bottom-0 left-0 w-full px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center border-t border-primary/10 bg-surface z-50">
     <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-0">
       <LogoMark className="h-8 w-8 opacity-90" alt="" />
-      <span className="font-sans text-xs md:text-sm uppercase tracking-wider text-primary font-bold">© 2026 GRAD ZAGREB | HACKATHON EDITION</span>
+      <span className="font-sans text-xs md:text-sm uppercase tracking-wider text-primary font-bold">© 2026 CITY OF ZAGREB | HACKATHON EDITION</span>
     </div>
     <div className="flex gap-8 md:gap-12">
       <a className="font-sans text-xs md:text-sm uppercase tracking-wider text-slate-400 hover:text-secondary transition-colors" href="#">Privacy</a>
@@ -49,7 +62,7 @@ const Slide1 = () => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen pt-24 pb-24 flex flex-col items-center justify-center relative overflow-hidden bg-surface"
+      className={`${slideFrame} relative flex flex-col items-center justify-start bg-surface`}
     >
       {/* Subtle Watermark Background */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 flex items-center justify-center overflow-hidden">
@@ -61,66 +74,73 @@ const Slide1 = () => {
       </div>
 
       {/* Content Canvas */}
-      <div className="z-10 container mx-auto px-6 text-center">
-        <div className="flex flex-col items-center max-w-5xl mx-auto">
-          {/* Branding Label */}
-          <div className="mb-8 md:mb-12 flex items-center gap-4 bg-surface-container-low px-6 py-2 signature-motif">
-            <span className="material-symbols-outlined text-primary">shield</span>
-            <span className="text-primary font-sans font-bold tracking-[0.2em] text-xs uppercase">HACKATHON EDITION 2026</span>
-          </div>
-
-          <div className="mb-6 md:mb-8 flex justify-center">
-            <div className="rounded-2xl bg-surface-container-lowest p-4 md:p-6 signature-motif ring-1 ring-primary/15 shadow-[0_20px_40px_-12px_rgba(27,28,28,0.12)]">
-              <LogoMark className="h-28 w-auto md:h-36 lg:h-44 max-w-[min(100%,280px)]" />
+      <div className="z-10 container mx-auto w-full min-w-0 px-4 py-2 text-center sm:px-6 sm:py-4">
+        <div className="mx-auto flex w-full min-w-0 max-w-5xl flex-col items-center">
+          <div className="mb-3 flex justify-center sm:mb-6 md:mb-8">
+            <div className="rounded-2xl bg-surface-container-lowest p-3 signature-motif ring-1 ring-primary/15 shadow-[0_20px_40px_-12px_rgba(27,28,28,0.12)] sm:p-4 md:p-6">
+              <LogoMark className="h-16 w-auto max-w-[min(100%,240px)] sm:h-24 md:h-36 md:max-w-[min(100%,280px)] lg:h-44" />
             </div>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-black text-primary tracking-tighter leading-none font-headline uppercase mb-6 md:mb-8">
+          <h1 className="mb-3 font-headline text-[clamp(2.75rem,14vw,10rem)] font-black uppercase leading-none tracking-tighter text-primary sm:mb-6 md:mb-8">
             KAJ-KAM?
           </h1>
 
           {/* Subtitle with Scale Jump */}
           <div className="max-w-2xl">
-            <p className="text-base md:text-lg lg:text-xl text-on-surface-variant font-medium tracking-wide mb-8 md:mb-10">
-              Umjetna inteligencija u službi čišćeg grada. <br />
-              <span className="text-secondary font-bold">Inovacijski sprint za pametniji Zagreb.</span>
+            <p className="mb-5 text-sm font-medium tracking-wide text-on-surface-variant sm:mb-8 sm:text-base md:mb-10 md:text-lg lg:text-xl">
+              AI in service of a cleaner city. <br />
+              <span className="text-secondary font-bold">An innovation sprint for a smarter Zagreb.</span>
             </p>
           </div>
 
-          <div className="w-full max-w-xl mx-auto mb-10 md:mb-12 px-4 py-5 bg-surface-container-low/80 signature-motif ring-1 ring-primary/10">
-            <p className="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase text-primary mb-3">
-              Aplikaciju i prezentaciju izradili
-            </p>
-            <div className="flex flex-col sm:flex-row sm:justify-center sm:items-start gap-5 sm:gap-10 text-center text-sm md:text-base">
-              <div>
-                <p className="font-black text-on-surface tracking-tight">Ivan Židov</p>
-                <p className="text-on-surface-variant text-xs md:text-sm mt-0.5">AI developer</p>
+          <div className="mx-auto mb-0 w-full max-w-2xl">
+            <div className="rounded-3xl border border-primary/10 bg-gradient-to-br from-surface via-surface-container-low/40 to-primary/[0.07] p-4 shadow-[0_16px_48px_-12px_rgba(0,52,102,0.12)] backdrop-blur-sm sm:rounded-[2rem] sm:p-6 md:p-8">
+              <div className="mb-4 flex flex-col items-center gap-2 text-center sm:mb-6 md:mb-8">
+                <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-primary">
+                  Team
+                </span>
+                <p className="max-w-md text-sm font-medium leading-snug text-on-surface-variant md:text-base">
+                  App &amp; presentation by
+                </p>
               </div>
-              <div className="hidden sm:block w-px h-12 bg-primary/15 shrink-0 self-center" aria-hidden />
-              <div>
-                <p className="font-black text-on-surface tracking-tight">Jurica Jurčec</p>
-                <p className="text-on-surface-variant text-xs md:text-sm mt-0.5">Sales &amp; Business Development</p>
+              <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+                <div className="group flex flex-col items-center rounded-2xl border border-white/60 bg-surface/80 p-5 text-center shadow-sm ring-1 ring-primary/5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:ring-primary/15 md:p-6">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-lg font-black tracking-tight text-on-primary shadow-inner">
+                    IŽ
+                  </div>
+                  <p className="font-headline text-lg font-black tracking-tight text-primary md:text-xl">Ivan Židov</p>
+                  <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface-container-high px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-on-surface-variant">
+                    <Cpu className="h-3.5 w-3.5 shrink-0 text-secondary" strokeWidth={2.25} />
+                    AI developer
+                  </div>
+                  <a
+                    href="mailto:ivan@textvalue.ai"
+                    className="mt-4 inline-flex max-w-full items-center gap-1.5 break-all text-xs font-medium text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-secondary hover:decoration-secondary"
+                  >
+                    <Mail className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+                    ivan@textvalue.ai
+                  </a>
+                </div>
+                <div className="group flex flex-col items-center rounded-2xl border border-white/60 bg-surface/80 p-5 text-center shadow-sm ring-1 ring-primary/5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:ring-primary/15 md:p-6">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary/90 to-secondary text-lg font-black tracking-tight text-white shadow-inner">
+                    JJ
+                  </div>
+                  <p className="font-headline text-lg font-black tracking-tight text-primary md:text-xl">Jurica Jurčec</p>
+                  <div className="mt-3 inline-flex max-w-[240px] flex-wrap items-center justify-center gap-x-1 gap-y-0.5 rounded-full bg-surface-container-high px-3 py-1.5 text-center text-[10px] font-semibold uppercase leading-tight tracking-wide text-on-surface-variant sm:max-w-none sm:text-[11px]">
+                    <Briefcase className="h-3.5 w-3.5 shrink-0 text-secondary" strokeWidth={2.25} />
+                    Sales &amp; Business Development
+                  </div>
+                  <a
+                    href="mailto:jurica.jurcec@itboost.hr"
+                    className="mt-4 inline-flex max-w-full items-center gap-1.5 break-all text-xs font-medium text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-secondary hover:decoration-secondary"
+                  >
+                    <Mail className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+                    jurica.jurcec@itboost.hr
+                  </a>
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Call to Action Cluster */}
-          <div className="flex flex-col md:flex-row gap-6 items-center">
-            <div className="p-8 bg-surface-container-lowest signature-motif shadow-[0_24px_24px_-4px_rgba(27,28,28,0.06)] flex flex-col items-center gap-4 min-w-[280px] md:min-w-[320px]">
-              <div className="w-16 h-16 bg-primary-container/10 rounded-full flex items-center justify-center mb-2">
-                <span className="material-symbols-outlined text-primary text-4xl">smart_toy</span>
-              </div>
-              <h3 className="font-bold tracking-widest text-primary uppercase text-sm">Pridruži se viziji</h3>
-              <p className="text-xs text-on-surface-variant uppercase tracking-tighter">Otvorene prijave do 15.11.</p>
-            </div>
-
-            <div className="p-8 bg-surface-container-low signature-motif flex flex-col items-center gap-4 min-w-[280px] md:min-w-[320px]">
-              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-2">
-                <span className="material-symbols-outlined text-secondary text-4xl">eco</span>
-              </div>
-              <h3 className="font-bold tracking-widest text-on-surface uppercase text-sm">Čišći Grad</h3>
-              <p className="text-xs text-on-surface-variant uppercase tracking-tighter">Održiva budućnost za sve nas</p>
             </div>
           </div>
         </div>
@@ -136,124 +156,139 @@ const Slide2 = () => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen pt-24 pb-24 flex flex-col md:flex-row bg-surface"
+      className={`${slideFrame} flex min-h-0 flex-col lg:flex-row lg:items-stretch bg-surface`}
     >
-      {/* Left Side: PROBLEM (ZG Blue Background) */}
-      <section className="flex-1 bg-primary text-on-primary p-8 md:p-12 lg:p-24 flex flex-col justify-center">
-        <div className="mb-8 md:mb-12">
-          <span className="text-secondary font-bold tracking-[0.2em] text-xs md:text-sm uppercase mb-4 block">URBAN CHALLENGE</span>
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight leading-tight uppercase font-headline">PROBLEM</h1>
-          <div className="h-1 w-16 md:w-24 bg-secondary mt-6"></div>
+      {/* PROBLEM — evidence first, then framing */}
+      <section className="flex min-h-0 flex-1 flex-col justify-start overflow-y-auto bg-primary p-6 text-on-primary lg:min-w-0 lg:max-w-[min(100%,52%)] lg:p-8 xl:p-10">
+        <div className="mb-4 shrink-0 lg:mb-5">
+          <span className="text-secondary mb-2 block text-xs font-bold uppercase tracking-[0.2em] md:text-sm">SPARKED BY REAL HEADLINES</span>
+          <h1 className="font-headline text-3xl font-black uppercase leading-tight tracking-tight sm:text-4xl md:text-5xl">PROBLEM</h1>
+          <div className="mt-3 h-1 w-16 bg-secondary md:mt-4 md:w-20"></div>
         </div>
 
-        <div className="space-y-8 md:space-y-12 max-w-lg">
-          {/* Point 1 */}
-          <div className="flex items-start gap-4 md:gap-6 group">
-            <div className="bg-primary-container p-3 md:p-4 signature-motif flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-on-primary text-2xl md:text-3xl">question_mark</span>
-            </div>
-            <div>
-              <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider mb-1 md:mb-2">UNKNOWN WASTE</h3>
-              <p className="text-on-primary-container/80 text-base md:text-lg leading-relaxed">Citizens often lack clarity on how to sort specific household materials correctly.</p>
-            </div>
-          </div>
+        <p className="mb-4 max-w-xl text-sm leading-relaxed text-on-primary-container/90 md:mb-5 md:text-[0.95rem]">
+          The same story in Croatian press and TV: contested plans, strained streets, and residents left guessing when rules and fees shift — why we started Kaj-Kam.
+        </p>
 
-          {/* Point 2 */}
-          <div className="flex items-start gap-4 md:gap-6 group">
-            <div className="bg-primary-container p-3 md:p-4 signature-motif flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-on-primary text-2xl md:text-3xl">delete_forever</span>
-            </div>
-            <div>
-              <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider mb-1 md:mb-2">FULL BINS</h3>
-              <p className="text-on-primary-container/80 text-base md:text-lg leading-relaxed">Lack of real-time data leads to overflowing recycling points and urban clutter.</p>
-            </div>
+        <div className="mb-5 rounded-2xl bg-on-primary/[0.06] p-3 ring-1 ring-on-primary/15 md:p-4">
+          <p className="mb-2.5 text-[10px] font-bold uppercase tracking-[0.2em] text-on-primary-container/75 md:text-[11px]">
+            Press &amp; TV — headline screenshots
+          </p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5">
+            {pressScreenshots.map((shot) => (
+              <figure
+                key={shot.file}
+                className="group min-w-0 overflow-hidden rounded-lg bg-on-primary/10 ring-1 ring-on-primary/30 shadow-md transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:ring-on-primary/50 hover:shadow-lg"
+              >
+                <img
+                  src={pressAsset(shot.file)}
+                  alt={shot.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-[4/3] h-auto w-full object-cover object-top"
+                />
+              </figure>
+            ))}
           </div>
+          <p className="mt-2.5 text-[9px] leading-snug text-on-primary-container/55 md:text-[10px]">
+            Editorial screenshots — sources belong to respective publishers.
+          </p>
+        </div>
 
-          {/* Point 3 */}
-          <div className="flex items-start gap-4 md:gap-6 group">
-            <div className="bg-primary-container p-3 md:p-4 signature-motif flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-on-primary text-2xl md:text-3xl">local_shipping</span>
+        <div className="flex flex-1 flex-col gap-3 md:gap-3.5">
+          {[
+            {
+              icon: 'newspaper' as const,
+              title: 'Plans under fire',
+              body: 'Waste plan to 2029, landfill transition, and infrastructure split opinion; critics call strategies incomplete while deadlines and costs mount.',
+            },
+            {
+              icon: 'delete_forever' as const,
+              title: "The street doesn't lie",
+              body: 'Press photos and TV show overflowing bins and damaged containers. When the mess is routine, people tune out — but the waste stays.',
+            },
+            {
+              icon: 'quiz' as const,
+              title: 'Rules vs. clarity',
+              body: 'Pay-as-you-throw and separation confuse many; coverage flags uneven enforcement — without a simple guide at the doorstep.',
+            },
+          ].map((item) => (
+            <div
+              key={item.title}
+              className="flex flex-col rounded-xl bg-primary-container/35 p-4 signature-motif ring-1 ring-on-primary/10"
+            >
+              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-container signature-motif">
+                <span className="material-symbols-outlined text-on-primary text-2xl">{item.icon}</span>
+              </div>
+              <h3 className="mb-1.5 font-headline text-sm font-black uppercase tracking-wide text-on-primary md:text-base">{item.title}</h3>
+              <p className="text-[13px] leading-snug text-on-primary-container/82 md:text-sm">{item.body}</p>
             </div>
-            <div>
-              <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider mb-1 md:mb-2">INEFFICIENT TRANSPORT</h3>
-              <p className="text-on-primary-container/80 text-base md:text-lg leading-relaxed">Waste collection routes are static and unresponsive to actual fill levels.</p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* Right Side: RJEŠENJE (White Background) */}
-      <section className="flex-1 bg-surface p-8 md:p-12 lg:p-24 flex flex-col justify-center relative overflow-hidden">
-        {/* Decorative Background Element */}
-        <div className="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-primary/5 rounded-bl-[128px] -mr-24 -mt-24 md:-mr-32 md:-mt-32"></div>
-        
-        <div className="mb-8 md:mb-12 relative z-10">
-          <span className="text-primary font-bold tracking-[0.2em] text-xs md:text-sm uppercase mb-4 block">CIVIC INNOVATION</span>
-          <h2 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight leading-tight uppercase text-primary font-headline">RJEŠENJE</h2>
-          <div className="h-1 w-16 md:w-24 bg-primary mt-6"></div>
+      {/* SOLUTION */}
+      <section className="relative flex min-h-0 flex-1 flex-col justify-start overflow-y-auto border-t border-primary/10 bg-surface p-6 lg:border-l lg:border-t-0 lg:p-8 xl:p-10">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-48 w-48 rounded-bl-[128px] bg-primary/5 md:-right-28 md:h-56 md:w-56"></div>
+
+        <div className="relative z-10 mb-4 shrink-0 lg:mb-6">
+          <span className="text-primary mb-2 block text-xs font-bold uppercase tracking-[0.2em] md:text-sm">CIVIC INNOVATION</span>
+          <h2 className="font-headline text-3xl font-black uppercase leading-tight tracking-tight text-primary sm:text-4xl md:text-5xl">SOLUTION</h2>
+          <div className="mt-3 h-1 w-16 bg-primary md:mt-4 md:w-20"></div>
         </div>
 
-        <div className="relative z-10 flex flex-col xl:flex-row gap-8 md:gap-12 items-center xl:items-start">
-          {/* App Mockup Concept */}
-          <div className="w-full max-w-sm shrink-0">
-            <div className="bg-surface-container-lowest p-4 md:p-6 signature-motif shadow-xl ring-1 ring-outline/10">
-              <div className="bg-primary p-4 signature-motif mb-6 flex justify-between items-center gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="bg-on-primary rounded-lg p-1 shrink-0 ring-1 ring-on-primary/20">
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-6 pb-2 lg:flex-row lg:items-start lg:gap-8 xl:gap-10">
+          <div className="mx-auto w-full max-w-[min(100%,20rem)] shrink-0 lg:mx-0 lg:max-w-[min(100%,18rem)] xl:max-w-xs">
+            <div className="bg-surface-container-lowest p-4 shadow-xl ring-1 ring-outline/10 signature-motif md:p-5">
+              <div className="mb-5 flex items-center justify-between gap-3 bg-primary p-3 signature-motif md:p-4">
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <div className="shrink-0 rounded-lg bg-on-primary p-1 ring-1 ring-on-primary/20">
                     <LogoMark className="h-8 w-8" alt="" />
                   </div>
-                  <span className="text-on-primary font-black tracking-tighter text-lg truncate">KAJ-KAM?</span>
+                  <span className="truncate font-black tracking-tighter text-on-primary text-base">KAJ-KAM?</span>
                 </div>
-                <span className="material-symbols-outlined text-on-primary shrink-0">qr_code_scanner</span>
+                <span className="material-symbols-outlined shrink-0 text-on-primary">qr_code_scanner</span>
               </div>
 
-              {/* App Content Bento Style */}
-              <div className="space-y-4">
-                <div className="bg-surface-container-low p-4 signature-motif">
-                  <span className="text-[10px] uppercase font-bold text-primary tracking-widest block mb-2">Next Collection</span>
-                  <div className="flex justify-between items-end">
-                    <span className="text-xl md:text-2xl font-black text-on-surface">PAPER DAY</span>
-                    <span className="text-secondary font-bold text-sm md:text-base">SUTRA</span>
+              <div className="space-y-3.5">
+                <div className="bg-surface-container-low p-3.5 signature-motif md:p-4">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-primary">Next Collection</span>
+                  <div className="flex items-end justify-between gap-2">
+                    <span className="text-lg font-black text-on-surface md:text-xl">PAPER DAY</span>
+                    <span className="text-sm font-bold text-secondary md:text-base">TOMORROW</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-surface-container-low p-4 signature-motif border-b-2 border-primary flex flex-col items-start">
-                    <span className="material-symbols-outlined text-primary mb-2">map</span>
-                    <span className="text-[10px] uppercase font-bold text-on-surface block">Nearby Bins</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col items-start border-b-2 border-primary bg-surface-container-low p-3.5 signature-motif">
+                    <span className="material-symbols-outlined mb-1.5 text-primary">map</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-on-surface">Nearby Bins</span>
                   </div>
-                  <div className="bg-surface-container-low p-4 signature-motif flex flex-col items-start">
-                    <span className="material-symbols-outlined text-primary mb-2">eco</span>
-                    <span className="text-[10px] uppercase font-bold text-on-surface block">Your Impact</span>
+                  <div className="flex flex-col items-start bg-surface-container-low p-3.5 signature-motif">
+                    <span className="material-symbols-outlined mb-1.5 text-primary">eco</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-on-surface">Your Impact</span>
                   </div>
                 </div>
 
-                <div className="bg-primary text-on-primary p-4 signature-motif flex items-center justify-between cursor-pointer hover:bg-primary/90 transition-colors">
-                  <span className="font-bold uppercase tracking-widest text-xs">Scan Waste</span>
+                <div className="flex cursor-pointer items-center justify-between bg-primary p-3.5 text-on-primary transition-colors signature-motif hover:bg-primary/90">
+                  <span className="text-xs font-bold uppercase tracking-widest">Scan Waste</span>
                   <span className="material-symbols-outlined">camera_alt</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Explanation Text */}
-          <div className="flex-1 space-y-6">
-            <p className="text-on-surface-variant text-lg md:text-xl leading-relaxed italic">
-              "KAJ-KAM? leverages AI-driven scanning and real-time civic data to bridge the gap between citizens and sustainable city management."
+          <div className="min-w-0 flex-1 space-y-5 lg:pt-1">
+            <p className="max-w-prose text-base italic leading-relaxed text-on-surface-variant md:text-lg">
+              &ldquo;Kaj-Kam? leverages AI-driven scanning and real-time civic data to bridge the gap between citizens and sustainable city management.&rdquo;
             </p>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary">check_circle</span>
-                <span className="font-bold uppercase text-xs md:text-sm tracking-wide">Real-time Bin Monitoring</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary">check_circle</span>
-                <span className="font-bold uppercase text-xs md:text-sm tracking-wide">AI Waste Classification</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary">check_circle</span>
-                <span className="font-bold uppercase text-xs md:text-sm tracking-wide">Optimized Logistics</span>
-              </li>
+            <ul className="space-y-3 md:space-y-3.5">
+              {['Real-time Bin Monitoring', 'AI Waste Classification', 'Optimized Logistics'].map((label) => (
+                <li key={label} className="flex items-center gap-3">
+                  <span className="material-symbols-outlined shrink-0 text-primary">check_circle</span>
+                  <span className="text-xs font-bold uppercase tracking-wide text-primary md:text-sm">{label}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -272,21 +307,21 @@ const slideMotion = {
 const Slide3 = () => (
   <motion.div
     {...slideMotion}
-    className="min-h-screen pt-24 pb-32 flex flex-col items-center justify-center px-6 bg-surface relative overflow-hidden"
+    className={`${slideFrame} flex flex-col items-center justify-center px-6 bg-surface relative`}
   >
-    <div className="absolute top-24 right-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl -z-0" />
-    <div className="z-10 max-w-5xl mx-auto text-center mb-12 md:mb-16">
-      <span className="text-primary font-bold tracking-[0.2em] text-xs uppercase block mb-4">KORACI</span>
-      <h2 className="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase font-headline">Kako radi?</h2>
+    <div className="absolute top-24 right-0 -z-0 h-96 w-96 rounded-full bg-secondary/5 blur-3xl" />
+    <div className="z-10 mx-auto mb-8 max-w-5xl text-center md:mb-12">
+      <span className="text-primary font-bold tracking-[0.2em] text-xs uppercase block mb-4">STEPS</span>
+      <h2 className="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase font-headline">How it works</h2>
       <p className="mt-4 text-on-surface-variant text-base md:text-lg max-w-2xl mx-auto">
-        Tri jednostavna koraka od fotografije do pametnijeg grada.
+        Three simple steps from a photo to a smarter city.
       </p>
     </div>
     <div className="z-10 grid md:grid-cols-3 gap-6 md:gap-8 w-full max-w-5xl">
       {[
-        { step: '01', icon: 'photo_camera', title: 'Skeniraj', desc: 'AI prepoznaje otpad na slici i kaže u koju kantu ide.' },
-        { step: '02', icon: 'map', title: 'Pronađi', desc: 'Interaktivna karta spremnika po Zagrebu s bojama po vrsti.' },
-        { step: '03', icon: 'volunteer_activism', title: 'Prijavi i skupljaj', desc: 'Prijavi punu kantu i osvajaj EkoBodove prema nagradama.' },
+        { step: '01', icon: 'photo_camera', title: 'Scan', desc: 'AI recognises waste in the photo and tells you which bin it belongs in.' },
+        { step: '02', icon: 'map', title: 'Find', desc: 'Interactive bin map of Zagreb with colour-coded marker types.' },
+        { step: '03', icon: 'volunteer_activism', title: 'Report & earn', desc: 'Report a full bin and earn EcoPoints towards rewards.' },
       ].map((item) => (
         <div
           key={item.step}
@@ -307,16 +342,16 @@ const Slide3 = () => (
 const Slide4 = () => (
   <motion.div
     {...slideMotion}
-    className="min-h-screen pt-24 pb-32 flex flex-col lg:flex-row bg-surface"
+    className={`${slideFrame} flex min-h-0 flex-col lg:flex-row bg-surface`}
   >
     <section className="flex-1 p-8 md:p-16 lg:p-20 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-primary/10">
-      <span className="text-secondary font-bold tracking-[0.2em] text-xs uppercase mb-4">ULAZ U PROIZVOD</span>
-      <h2 className="text-4xl md:text-5xl font-black text-primary uppercase font-headline tracking-tight mb-6">Landing stranica</h2>
+      <span className="text-secondary font-bold tracking-[0.2em] text-xs uppercase mb-4">PRODUCT ENTRY</span>
+      <h2 className="text-4xl md:text-5xl font-black text-primary uppercase font-headline tracking-tight mb-6">Landing page</h2>
       <p className="text-on-surface-variant text-lg leading-relaxed mb-8">
-        Prvi dojam za žiri i javnost: jasan problem, rješenje i poziv na akciju — „Isprobaj aplikaciju“ i „Kako radi?“.
+        First impression for the jury and the public: clear problem, solution, and call to action — “Try the app” and “How it works”.
       </p>
       <ul className="space-y-3">
-        {['Hero s naslovom i CTA gumbima', 'Sekcija problem (3 točke)', 'Pregled značajki i B2B vrijednost'].map((t) => (
+        {['Hero with headline and CTAs', 'Problem section (3 points)', 'Feature overview & B2B value'].map((t) => (
           <li key={t} className="flex items-center gap-3 text-sm md:text-base font-medium">
             <span className="material-symbols-outlined text-primary text-xl">chevron_right</span>
             {t}
@@ -326,12 +361,12 @@ const Slide4 = () => (
     </section>
     <section className="flex-1 bg-primary text-on-primary p-8 md:p-16 lg:p-20 flex flex-col justify-center">
       <span className="text-secondary font-bold tracking-[0.2em] text-xs uppercase mb-4">MVP</span>
-      <h2 className="text-4xl md:text-5xl font-black uppercase font-headline tracking-tight mb-6">Web aplikacija</h2>
+      <h2 className="text-4xl md:text-5xl font-black uppercase font-headline tracking-tight mb-6">Web app</h2>
       <p className="text-on-primary-container/90 text-lg leading-relaxed mb-8">
-        Mobile-first sučelje (do ~450px), donja navigacija s četiri taba — sve na jednom mjestu u pregledniku.
+        Mobile-first UI (~450px max width), bottom navigation with four tabs — all in one browser experience.
       </p>
       <div className="flex flex-wrap gap-2">
-        {['AI skener', 'Karta', 'Eko-asistent', 'Profil'].map((t) => (
+        {['AI Scanner', 'Map', 'Eco Assistant', 'Profile'].map((t) => (
           <span key={t} className="px-4 py-2 bg-primary-container/30 signature-motif text-xs font-bold uppercase tracking-wider">
             {t}
           </span>
@@ -344,27 +379,27 @@ const Slide4 = () => (
 const Slide5 = () => (
   <motion.div
     {...slideMotion}
-    className="min-h-screen pt-24 pb-32 flex flex-col md:flex-row items-stretch bg-surface"
+    className={`${slideFrame} flex min-h-0 flex-col md:flex-row items-stretch bg-surface`}
   >
     <div className="flex-1 p-8 md:p-14 lg:p-20 flex flex-col justify-center">
-      <span className="text-primary font-bold tracking-[0.2em] text-xs uppercase mb-4">TAB 1 — JEZGRA</span>
-      <h2 className="text-4xl md:text-6xl font-black text-primary uppercase font-headline tracking-tight mb-6">AI skener</h2>
+      <span className="text-primary font-bold tracking-[0.2em] text-xs uppercase mb-4">TAB 1 — CORE</span>
+      <h2 className="text-4xl md:text-6xl font-black text-primary uppercase font-headline tracking-tight mb-6">AI Scanner</h2>
       <p className="text-on-surface-variant text-lg leading-relaxed mb-8">
-        Upload ili kamera: Gemini analizira sliku i vraća naziv predmeta, vrstu kante i kratko objašnjenje. Nakon uspjeha — EkoBod i motivacijski pop-up.
+        Upload or camera: Gemini analyses the image and returns the item name, bin type, and a short explanation. On success — EcoPoints and a motivational pop-up.
       </p>
       <div className="space-y-4">
         <div className="flex gap-4 items-start">
           <span className="material-symbols-outlined text-secondary text-2xl shrink-0">hourglass_empty</span>
           <div>
-            <p className="font-bold uppercase text-sm tracking-wide text-primary">Učitavanje</p>
-            <p className="text-on-surface-variant text-sm">Poruka tipa „Zagrebački AI kopa po smeću…“</p>
+            <p className="font-bold uppercase text-sm tracking-wide text-primary">Loading</p>
+            <p className="text-on-surface-variant text-sm">Playful message e.g. “Zagreb AI is digging through the waste…”</p>
           </div>
         </div>
         <div className="flex gap-4 items-start">
           <span className="material-symbols-outlined text-secondary text-2xl shrink-0">recycling</span>
           <div>
-            <p className="font-bold uppercase text-sm tracking-wide text-primary">Rezultat</p>
-            <p className="text-on-surface-variant text-sm">JSON → čitljiv prikaz: kanta, boja/ikona, zašto tamo ide.</p>
+            <p className="font-bold uppercase text-sm tracking-wide text-primary">Result</p>
+            <p className="text-on-surface-variant text-sm">JSON → readable UI: bin, colour/icon, why it goes there.</p>
           </div>
         </div>
       </div>
@@ -373,13 +408,13 @@ const Slide5 = () => (
       <div className="w-full max-w-sm bg-surface-container-lowest p-6 signature-motif shadow-xl">
         <div className="aspect-[4/5] bg-surface-container-low rounded-lg flex flex-col items-center justify-center gap-4 mb-4 border-2 border-dashed border-primary/30">
           <span className="material-symbols-outlined text-primary text-5xl">add_a_photo</span>
-          <span className="text-xs uppercase font-bold text-on-surface-variant tracking-widest">Odaberi sliku</span>
+          <span className="text-xs uppercase font-bold text-on-surface-variant tracking-widest">Choose photo</span>
         </div>
         <div className="bg-primary text-on-primary p-4 signature-motif flex justify-between items-center">
-          <span className="font-bold text-sm uppercase tracking-wider">Aluminijska limenka</span>
+          <span className="font-bold text-sm uppercase tracking-wider">Aluminium can</span>
           <span className="material-symbols-outlined">check_circle</span>
         </div>
-        <p className="text-center text-secondary font-bold text-sm mt-3 uppercase tracking-wide">+1 EkoBod</p>
+        <p className="text-center text-secondary font-bold text-sm mt-3 uppercase tracking-wide">+1 EcoPoint</p>
       </div>
     </div>
   </motion.div>
@@ -388,7 +423,7 @@ const Slide5 = () => (
 const Slide6 = () => (
   <motion.div
     {...slideMotion}
-    className="min-h-screen pt-24 pb-32 bg-primary text-on-primary flex flex-col lg:flex-row"
+    className={`${slideFrame} flex min-h-0 flex-col bg-primary text-on-primary lg:flex-row`}
   >
     <div className="flex-1 p-8 md:p-14 lg:p-20 flex flex-col justify-center order-2 lg:order-1">
       <div className="bg-on-primary/10 signature-motif p-6 md:p-8 max-w-md mx-auto lg:mx-0 w-full ring-1 ring-on-primary/20">
@@ -399,23 +434,35 @@ const Slide6 = () => (
           <span className="absolute bottom-1/3 left-1/2 w-3 h-3 rounded-full bg-amber-700" />
         </div>
         <p className="text-xs uppercase tracking-widest text-secondary font-bold mb-2">Bottom sheet</p>
-        <p className="text-sm text-on-primary-container/85">Ime, lokacija, kvart — gumb „Prijavi punu kantu“ → marker crveno / upozorenje + bodovi.</p>
+        <p className="text-sm text-on-primary-container/85">Name, location, district — “Report full bin” turns the marker red / alert + points.</p>
       </div>
     </div>
     <div className="flex-1 p-8 md:p-14 lg:p-20 flex flex-col justify-center order-1 lg:order-2">
       <span className="text-secondary font-bold tracking-[0.2em] text-xs uppercase mb-4">TAB 2</span>
-      <h2 className="text-4xl md:text-6xl font-black uppercase font-headline tracking-tight mb-6">Karta spremnika</h2>
-      <p className="text-on-primary-container/90 text-lg leading-relaxed mb-8">
-        Karta Zagreba s pinovima iz CSV/JSON-a. Boje markera po <strong className="text-on-primary">Bin_Type</strong> — papir, plastika, bio i ostalo na prvi pogled.
+      <h2 className="text-4xl md:text-6xl font-black uppercase font-headline tracking-tight mb-6">Bin map</h2>
+      <p className="text-on-primary-container/90 text-lg leading-relaxed mb-6">
+        Map of Zagreb with pins from CSV/JSON. Marker colours by <strong className="text-on-primary">Bin_Type</strong> — paper, plastic, bio, and more at a glance.
+      </p>
+      <p className="mb-8 max-w-xl rounded-xl border border-on-primary/20 bg-on-primary/5 p-4 text-sm leading-relaxed text-on-primary-container/90">
+        <span className="mb-2 block font-bold uppercase tracking-wide text-secondary">Data source</span>
+        Database of green islands and waste containers (City of Zagreb):{' '}
+        <a
+          href="https://experience.arcgis.com/experience/f2b7df9552ea4525b64ceb78ba39876c/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="break-all font-medium text-secondary underline decoration-secondary/60 underline-offset-2 transition-colors hover:text-on-primary hover:decoration-on-primary"
+        >
+          https://experience.arcgis.com/experience/f2b7df9552ea4525b64ceb78ba39876c/
+        </a>
       </p>
       <ul className="space-y-3 text-on-primary-container/90">
         <li className="flex items-center gap-2">
           <span className="material-symbols-outlined text-secondary">touch_app</span>
-          Klik na marker otvara detalje spremnika.
+          Tap a marker to open bin details.
         </li>
         <li className="flex items-center gap-2">
           <span className="material-symbols-outlined text-secondary">campaign</span>
-          Crowdsourcing punih kanti za Holding.
+          Crowdsourced full bins for the municipal company.
         </li>
       </ul>
     </div>
@@ -425,18 +472,18 @@ const Slide6 = () => (
 const Slide7 = () => (
   <motion.div
     {...slideMotion}
-    className="min-h-screen pt-24 pb-32 flex flex-col items-center justify-center px-6 bg-surface"
+    className={`${slideFrame} flex flex-col items-center justify-center px-6 bg-surface`}
   >
     <div className="max-w-3xl w-full text-center mb-10">
       <span className="text-primary font-bold tracking-[0.2em] text-xs uppercase block mb-4">TAB 3</span>
-      <h2 className="text-4xl md:text-6xl font-black text-primary uppercase font-headline tracking-tight mb-4">ZG Eko-asistent</h2>
+      <h2 className="text-4xl md:text-6xl font-black text-primary uppercase font-headline tracking-tight mb-4">ZG Eco Assistant</h2>
       <p className="text-on-surface-variant text-lg">
-        Chat sučelje s Geminijem u ulozi asistenta Čistoće: pitanja o otpadu, pravilima i savjetima za građane.
+        Chat UI with Gemini as a city cleanliness assistant: waste rules, tips, and answers for residents.
       </p>
     </div>
     <div className="w-full max-w-lg bg-surface-container-lowest signature-motif p-6 ring-1 ring-outline/10 shadow-xl">
       <div className="flex gap-2 flex-wrap justify-center mb-6">
-        {['Kamo idu baterije?', 'Što je glomazni otpad?', 'Prati li se jogurt čašica?'].map((q) => (
+        {['Where do batteries go?', 'What is bulky waste?', 'Rinse yogurt cups?'].map((q) => (
           <button
             key={q}
             type="button"
@@ -448,15 +495,15 @@ const Slide7 = () => (
       </div>
       <div className="space-y-3 text-left min-h-[120px]">
         <div className="bg-surface-container-low p-3 rounded-2xl rounded-bl-md text-sm text-on-surface-variant max-w-[85%]">
-          Kamo idu baterije?
+          Where do batteries go?
         </div>
         <div className="bg-primary/10 p-3 rounded-2xl rounded-br-md text-sm text-on-surface ml-auto max-w-[90%]">
-          Baterije i akumulatori idu u posebne spremnike ili Zelenom točku — ne u kućni otpad.
+          Batteries and accumulators belong in dedicated bins or a recycling drop-off — not in household waste.
         </div>
       </div>
       <div className="mt-6 flex gap-2 border-t border-outline/20 pt-4">
         <span className="material-symbols-outlined text-on-surface-variant">chat</span>
-        <span className="text-xs text-on-surface-variant uppercase tracking-widest flex items-center">Brza pitanja = nulta trenja za žiri</span>
+        <span className="text-xs text-on-surface-variant uppercase tracking-widest flex items-center">Quick prompts = zero friction for the jury</span>
       </div>
     </div>
   </motion.div>
@@ -465,31 +512,136 @@ const Slide7 = () => (
 const Slide8 = () => (
   <motion.div
     {...slideMotion}
-    className="min-h-screen pt-24 pb-32 flex flex-col md:flex-row bg-surface-container-low"
+    className={`${slideFrame} flex min-h-0 flex-col md:flex-row bg-surface-container-low`}
   >
     <div className="flex-1 p-8 md:p-16 flex flex-col justify-center">
-      <span className="text-primary font-bold tracking-[0.2em] text-xs uppercase mb-4">TAB 4 — ZADRŽAVANJE</span>
-      <h2 className="text-4xl md:text-5xl font-black text-primary uppercase font-headline tracking-tight mb-6">Moj profil</h2>
+      <span className="text-primary font-bold tracking-[0.2em] text-xs uppercase mb-4">TAB 4 — RETENTION</span>
+      <h2 className="text-4xl md:text-5xl font-black text-primary uppercase font-headline tracking-tight mb-6">My profile</h2>
       <p className="text-on-surface-variant text-lg leading-relaxed mb-6">
-        Bez prave registracije za hackathon: EkoBodovi u <code className="text-primary font-mono text-sm bg-surface px-2 py-0.5 rounded">localStorage</code> — odmah „tvoj“ profil i napredak.
+        No full sign-up for the hackathon: EcoPoints in <code className="text-primary font-mono text-sm bg-surface px-2 py-0.5 rounded">localStorage</code> — instant “your” profile and progress.
       </p>
       <ul className="space-y-2 text-on-surface-variant">
-        <li className="flex items-center gap-2"><span className="material-symbols-outlined text-secondary text-xl">stars</span> Veliki brojač bodova (npr. 15 / 100)</li>
-        <li className="flex items-center gap-2"><span className="material-symbols-outlined text-secondary text-xl">linear_scale</span> Progress bar do nagrade (ZG vrećice)</li>
-        <li className="flex items-center gap-2"><span className="material-symbols-outlined text-secondary text-xl">qr_code_2</span> Demo QR/barkod kad se prag ispuni</li>
+        <li className="flex items-center gap-2"><span className="material-symbols-outlined text-secondary text-xl">stars</span> Large points counter (e.g. 15 / 100)</li>
+        <li className="flex items-center gap-2"><span className="material-symbols-outlined text-secondary text-xl">linear_scale</span> Progress bar to reward (ZG bags)</li>
+        <li className="flex items-center gap-2"><span className="material-symbols-outlined text-secondary text-xl">qr_code_2</span> Demo QR/barcode when threshold is met</li>
       </ul>
     </div>
     <div className="flex-1 p-8 md:p-16 flex items-center justify-center">
       <div className="w-full max-w-xs bg-surface signature-motif p-8 shadow-xl ring-1 ring-outline/10 text-center">
-        <p className="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">EkoBodovi</p>
+        <p className="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">EcoPoints</p>
         <p className="text-6xl font-black text-primary font-headline mb-4">15</p>
         <div className="h-3 bg-surface-container-high rounded-full overflow-hidden mb-2">
           <div className="h-full w-[15%] bg-secondary rounded-full" />
         </div>
-        <p className="text-xs text-on-surface-variant mb-6">Još 85 do paketa vrećica</p>
+        <p className="text-xs text-on-surface-variant mb-6">85 more to the bag reward</p>
         <button type="button" className="w-full py-3 bg-surface-container-high text-on-surface-variant text-xs font-bold uppercase tracking-widest signature-motif cursor-default">
-          Preuzmi nagradu (zaključano)
+          Claim reward (locked)
         </button>
+      </div>
+    </div>
+  </motion.div>
+);
+
+const SlideZGInspiracija = () => (
+  <motion.div
+    {...slideMotion}
+    className={`${slideFrame} flex min-h-0 flex-col bg-surface px-4 sm:px-6`}
+  >
+    <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col gap-4 lg:flex-row lg:items-start lg:gap-10 xl:gap-14">
+      <div className="shrink-0 lg:max-w-[min(100%,28rem)]">
+        <span className="mb-3 block text-xs font-bold uppercase tracking-[0.2em] text-secondary">Module</span>
+        <div className="mb-3 flex flex-wrap items-center gap-2 md:mb-4 md:gap-3">
+          <span className="material-symbols-outlined text-3xl text-primary md:text-5xl">local_fire_department</span>
+          <h2 className="font-headline text-2xl font-black uppercase tracking-tight text-primary sm:text-3xl md:text-5xl">ZG Inspiration</h2>
+        </div>
+        <p className="mb-4 text-lg font-semibold text-primary">
+          Small change, big difference. <span aria-hidden>💚</span>
+        </p>
+        <p className="text-on-surface-variant text-base leading-relaxed">
+          Short daily facts about waste — no lectures. Users learn unconsciously how much they matter in the{' '}
+          <strong className="text-primary">sorting chain</strong>: from a can to a green island; every choice ties to outcomes
+          and EcoPoints rewards.
+        </p>
+        <ul className="mt-4 space-y-2 text-xs text-on-surface-variant sm:mt-6 sm:space-y-3 sm:text-sm">
+          <li className="flex gap-2">
+            <span className="material-symbols-outlined shrink-0 text-secondary text-lg sm:text-xl">psychology</span>
+            Micro-learning in the app — one fact takes seconds to read.
+          </li>
+          <li className="flex gap-2">
+            <span className="material-symbols-outlined shrink-0 text-secondary text-lg sm:text-xl">gaming</span>
+            “I’ve read it” / “Reflect” confirmations earn points and link education to the profile.
+          </li>
+        </ul>
+      </div>
+
+      <div className="min-h-0 min-w-0 flex-1 space-y-2 sm:space-y-3 lg:space-y-4">
+        {[
+          {
+            featured: true,
+            icon: 'public',
+            title: 'Today in Zagreb',
+            body: 'One plastic bottle can last 450 years. You decide where it ends up.',
+            action: 'Reflect',
+            pts: '+1',
+          },
+          {
+            icon: 'inventory_2',
+            title: 'A can’s journey',
+            body: 'In the yellow bin — back in ~60 days. In nature — it can linger for 200 years.',
+            action: 'Read',
+            pts: '+2',
+          },
+          {
+            icon: 'soap',
+            title: 'Rinse packaging?',
+            body: 'A quick rinse helps avoid contaminating other waste in the yellow bin.',
+            action: 'Read',
+            pts: '+1',
+          },
+          {
+            icon: 'location_city',
+            title: 'ZG & waste',
+            body: 'Zagreb generates hundreds of thousands of tonnes of waste yearly — individual choices still matter.',
+            action: 'Read',
+            pts: '+2',
+          },
+          {
+            icon: 'compost',
+            title: 'Banana peel',
+            body: 'In bio waste it becomes compost; in mixed waste it becomes a processing problem.',
+            action: 'Read',
+            pts: '+1',
+          },
+        ].map((card) => (
+          <div
+            key={card.title}
+            className={`flex flex-col gap-2 rounded-xl border p-3 sm:gap-3 sm:rounded-2xl sm:p-4 md:flex-row md:items-center md:justify-between md:gap-6 md:p-5 ${
+              card.featured
+                ? 'border-primary/25 bg-primary/[0.06] ring-1 ring-primary/10'
+                : 'border-outline/20 bg-surface-container-lowest ring-1 ring-outline/10'
+            }`}
+          >
+            <div className="flex min-w-0 gap-3 sm:gap-4">
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg sm:h-12 sm:w-12 sm:rounded-xl ${
+                  card.featured ? 'bg-primary/15 text-primary' : 'bg-surface-container-high text-primary'
+                }`}
+              >
+                <span className="material-symbols-outlined text-xl sm:text-2xl">{card.icon}</span>
+              </div>
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-wider text-primary sm:text-[10px] md:text-xs">{card.title}</p>
+                <p className="mt-0.5 text-xs leading-snug text-on-surface-variant sm:mt-1 sm:text-sm">{card.body}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="shrink-0 self-start rounded-lg bg-primary px-3 py-2 text-[10px] font-bold uppercase tracking-wide text-on-primary sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-xs md:self-center"
+            >
+              {card.action} ({card.pts})
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   </motion.div>
@@ -498,36 +650,36 @@ const Slide8 = () => (
 const Slide9 = () => (
   <motion.div
     {...slideMotion}
-    className="min-h-screen pt-24 pb-32 flex flex-col items-center justify-center px-6 bg-surface relative overflow-hidden"
+    className={`${slideFrame} flex flex-col items-center justify-center px-6 bg-surface relative`}
   >
     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/10 pointer-events-none" />
-    <div className="z-10 max-w-4xl w-full">
-      <div className="text-center mb-12">
-        <span className="text-secondary font-bold tracking-[0.2em] text-xs uppercase block mb-4">ZA GRAD ZAGREB</span>
-        <h2 className="text-4xl md:text-6xl font-black text-primary uppercase font-headline tracking-tight">Poslovna vrijednost</h2>
+    <div className="z-10 w-full min-w-0 max-w-4xl">
+      <div className="mb-8 text-center md:mb-12">
+        <span className="text-secondary font-bold tracking-[0.2em] text-xs uppercase block mb-4">FOR THE CITY OF ZAGREB</span>
+        <h2 className="text-4xl md:text-6xl font-black text-primary uppercase font-headline tracking-tight">Business value</h2>
         <p className="mt-4 text-on-surface-variant text-lg max-w-2xl mx-auto">
-          Zašto se ovo isplati Holdingu i građanima — ne samo „lijepa aplikacija“.
+          Why this pays off for the utility and residents — not just a “nice app”.
         </p>
       </div>
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid gap-4 md:grid-cols-3 md:gap-6">
         {[
-          { icon: 'sensors', title: 'Crowdsourcing', desc: 'Građani kao „senzori“ — podaci o punim kantama bez skupe infrastrukture.' },
-          { icon: 'route', title: 'Rute odvoza', desc: 'Heatmapa i signali za optimizaciju vožnji umjesto statičkih ruta.' },
-          { icon: 'gavel', title: 'Manje rizika', desc: 'Bolje odvajanje smanjuje pritisak kazni i nepravilnog odlaganja.' },
+          { icon: 'sensors', title: 'Crowdsourcing', desc: 'Residents as “sensors” — full-bin signals without expensive hardware.' },
+          { icon: 'route', title: 'Collection routes', desc: 'Heatmaps and signals to optimise runs instead of static routes.' },
+          { icon: 'gavel', title: 'Lower risk', desc: 'Better sorting reduces fines pressure and illegal dumping.' },
         ].map((c) => (
-          <div key={c.title} className="bg-surface-container-lowest p-8 signature-motif ring-1 ring-outline/10">
+          <div key={c.title} className="bg-surface-container-lowest p-5 signature-motif ring-1 ring-outline/10 md:p-8">
             <span className="material-symbols-outlined text-secondary text-4xl mb-4">{c.icon}</span>
             <h3 className="text-lg font-black uppercase tracking-wide text-primary mb-3">{c.title}</h3>
             <p className="text-on-surface-variant text-sm leading-relaxed">{c.desc}</p>
           </div>
         ))}
       </div>
-      <div className="flex flex-col items-center mt-12 gap-5">
-        <div className="rounded-2xl bg-surface-container-low p-4 ring-1 ring-primary/10">
-          <LogoMark className="h-16 w-auto md:h-20" />
+      <div className="mt-8 flex flex-col items-center gap-4 md:mt-12 md:gap-5">
+        <div className="rounded-2xl bg-surface-container-low p-3 ring-1 ring-primary/10 md:p-4">
+          <LogoMark className="h-12 w-auto md:h-20" />
         </div>
         <p className="text-primary font-bold uppercase tracking-[0.15em] text-sm text-center">
-          KAJ-KAM? — hvala žiriju
+          Kaj-Kam? — thank you, jury
         </p>
       </div>
     </div>
@@ -536,7 +688,7 @@ const Slide9 = () => (
 
 export default function App() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8, Slide9];
+  const slides = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8, SlideZGInspiracija, Slide9];
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -555,10 +707,10 @@ export default function App() {
   const prevSlide = () => setCurrentSlide((s) => Math.max(s - 1, 0));
 
   const CurrentSlideComponent = slides[currentSlide];
-  const showDeckWatermark = currentSlide >= 1 && currentSlide <= 7;
+  const showDeckWatermark = currentSlide >= 1 && currentSlide <= 8;
 
   return (
-    <div className="bg-surface text-on-surface font-sans min-h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-on-primary">
+    <div className="flex h-full min-h-0 max-h-dvh flex-col overflow-hidden bg-surface font-sans text-on-surface selection:bg-primary selection:text-on-primary">
       <Header />
 
       {showDeckWatermark && (
@@ -572,10 +724,12 @@ export default function App() {
         </div>
       )}
       
-      <main className="flex-1 relative">
-        <AnimatePresence mode="wait">
-          <CurrentSlideComponent key={currentSlide} />
-        </AnimatePresence>
+      <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="relative min-h-0 flex-1">
+          <AnimatePresence mode="wait">
+            <CurrentSlideComponent key={currentSlide} />
+          </AnimatePresence>
+        </div>
       </main>
 
       <Footer />
