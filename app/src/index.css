@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #004482;
+  --color-primary-container: #005BAB;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #bcd4ff;
+  --color-secondary: #BB0400;
+  --color-surface: #FBF9F8;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f3f2;
+  --color-surface-container: #f0eded;
+  --color-surface-container-high: #eae8e7;
+  --color-surface-container-highest: #e4e2e1;
+  --color-on-surface: #1b1c1c;
+  --color-on-surface-variant: #424751;
+  --color-outline: #727783;
+  --color-outline-variant: #c2c6d3;
+  --color-waste-plastic: #FFD600;
+  --color-waste-paper: #004482;
+  --color-waste-bio: #705d00;
+  --color-waste-glass: #16a34a;
+}
+
+@layer utilities {
+  .shield-motif {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: 'Inter', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
