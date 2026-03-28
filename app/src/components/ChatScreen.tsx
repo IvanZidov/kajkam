@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Info, Bot, Send, Leaf, Loader2 } from 'lucide-react';
+import { Bot, Send, Leaf, Loader2, Trash2 } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -102,6 +102,13 @@ export default function ChatScreen() {
     sendMessage(input);
   };
 
+  const clearChat = async () => {
+    setMessages([{ role: 'assistant', text: t.chat.welcomeMessage }]);
+    if (user) {
+      await supabase.from('chat_messages').delete().eq('user_id', user.id);
+    }
+  };
+
   return (
     <div className="flex flex-col flex-1">
       <div className="px-4 md:px-6 py-4">
@@ -110,7 +117,15 @@ export default function ChatScreen() {
             <Leaf className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wider">{t.chat.banner}</span>
           </div>
-          <Info className="w-5 h-5 text-secondary" />
+          <button
+            onClick={clearChat}
+            disabled={isLoading}
+            className="flex items-center gap-1.5 text-secondary hover:text-white transition-colors disabled:opacity-50"
+            title={t.chat.clearChat}
+          >
+            <Trash2 className="w-4 h-4" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">{t.chat.clearChat}</span>
+          </button>
         </div>
       </div>
 

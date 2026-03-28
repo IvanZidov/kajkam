@@ -7,6 +7,7 @@ export interface Translations {
     map: string;
     chat: string;
     rewards: string;
+    facts: string;
   };
   login: {
     greeting: string;
@@ -78,6 +79,7 @@ export interface Translations {
     quickPrompt2: string;
     quickPrompt3: string;
     assistantLabel: string;
+    clearChat: string;
   };
   map: {
     searchPlaceholder: string;
@@ -158,6 +160,19 @@ export interface Translations {
     compostingDesc: string;
     source: string;
   };
+  facts: {
+    title: string;
+    dailyFact: string;
+    dailyQuiz: string;
+    markAsRead: string;
+    alreadyRead: string;
+    submitAnswer: string;
+    correct: string;
+    incorrect: string;
+    alreadyAnswered: string;
+    pointsEarned: (n: number) => string;
+    comeBackTomorrow: string;
+  };
   binLabels: {
     plastika: string;
     papir: string;
@@ -176,6 +191,7 @@ export const hr: Translations = {
     map: 'Karta',
     chat: 'Chat',
     rewards: 'Nagrade',
+    facts: 'Činjenice',
   },
   login: {
     greeting: 'Bok, Zagreb!',
@@ -238,7 +254,7 @@ export const hr: Translations = {
     times: 'puta',
   },
   chat: {
-    banner: 'ZG Eko-Asistent — Powered by Gemini',
+    banner: 'ZG Eko-Asistent',
     welcomeMessage: 'Bok! Ja sam tvoj ZG Eko-Asistent. Kako ti mogu pomoći s recikliranjem danas?',
     thinkingMessage: 'Razmišljam...',
     errorMessage: 'Ups, došlo je do greške. Pokušaj ponovo.',
@@ -249,6 +265,7 @@ export const hr: Translations = {
     quickPrompt2: 'Što je glomazni otpad?',
     quickPrompt3: 'Čašice od jogurta?',
     assistantLabel: 'ZG Eko-Asistent',
+    clearChat: 'Obriši chat',
   },
   map: {
     searchPlaceholder: 'Pretraži ulicu ili vrstu...',
@@ -417,6 +434,19 @@ Ako ne znaš točnu lokaciju spremnika, predloži da korisnik provjeri na karti 
     compostingDesc: 'Grad dijeli besplatne kompostere kućanstvima s vrtom. Tko kompostira može tražiti manji smeđi spremnik.',
     source: 'Izvor: cistoca.hr | Grad Zagreb',
   },
+  facts: {
+    title: 'Dnevne Zanimljivosti',
+    dailyFact: 'Zanimljivost Dana',
+    dailyQuiz: 'Kviz Dana',
+    markAsRead: 'Pročitano! (+1 bod)',
+    alreadyRead: 'Već pročitano danas ✓',
+    submitAnswer: 'Potvrdi odgovor',
+    correct: 'Točno! Bravo! 🎉',
+    incorrect: 'Netočno. Pokušaj sutra!',
+    alreadyAnswered: 'Već odgovoreno danas',
+    pointsEarned: (n) => `+${n} EkoBod${n === 1 ? '' : n < 5 ? 'a' : 'ova'}`,
+    comeBackTomorrow: 'Dođi sutra po nove zanimljivosti!',
+  },
   binLabels: {
     plastika: 'Plastika i Metal',
     papir: 'Papir i Karton',
@@ -435,6 +465,7 @@ export const en: Translations = {
     map: 'Map',
     chat: 'Chat',
     rewards: 'Rewards',
+    facts: 'Facts',
   },
   login: {
     greeting: 'Hello, Zagreb!',
@@ -497,7 +528,7 @@ export const en: Translations = {
     times: 'times',
   },
   chat: {
-    banner: 'ZG Eco-Assistant — Powered by Gemini',
+    banner: 'ZG Eco-Assistant',
     welcomeMessage: "Hi! I'm your ZG Eco-Assistant. How can I help you with recycling today?",
     thinkingMessage: 'Thinking...',
     errorMessage: 'Oops, an error occurred. Please try again.',
@@ -508,6 +539,7 @@ export const en: Translations = {
     quickPrompt2: 'What is bulky waste?',
     quickPrompt3: 'Yogurt cups?',
     assistantLabel: 'ZG Eco-Assistant',
+    clearChat: 'Clear chat',
   },
   map: {
     searchPlaceholder: 'Search street or type...',
@@ -675,6 +707,19 @@ If you don't know the exact bin location, suggest the user check the Map tab in 
     composting: 'Home composting',
     compostingDesc: 'The city distributes free composters to households with gardens. Those who compost can request a smaller brown bin.',
     source: 'Source: cistoca.hr | City of Zagreb',
+  },
+  facts: {
+    title: 'Daily Fun Facts',
+    dailyFact: 'Fact of the Day',
+    dailyQuiz: 'Quiz of the Day',
+    markAsRead: 'Mark as Read (+1 pt)',
+    alreadyRead: 'Already read today ✓',
+    submitAnswer: 'Submit Answer',
+    correct: 'Correct! Well done! 🎉',
+    incorrect: 'Incorrect. Try again tomorrow!',
+    alreadyAnswered: 'Already answered today',
+    pointsEarned: (n) => `+${n} EcoPoint${n === 1 ? '' : 's'}`,
+    comeBackTomorrow: 'Come back tomorrow for new facts!',
   },
   binLabels: {
     plastika: 'Plastics & Metal',

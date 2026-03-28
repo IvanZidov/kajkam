@@ -1,4 +1,4 @@
-import { Camera, Map as MapIcon, MessageSquare, Gift } from 'lucide-react';
+import { Camera, Map as MapIcon, MessageSquare, Gift, Lightbulb } from 'lucide-react';
 import { Tab } from '../App';
 import { useTranslation } from '../i18n/LanguageContext';
 
@@ -14,6 +14,7 @@ export default function BottomNav({ currentTab, onTabChange }: BottomNavProps) {
     { id: 'karta', label: t.nav.map, icon: MapIcon },
     { id: 'chat', label: t.nav.chat, icon: MessageSquare },
     { id: 'nagrade', label: t.nav.rewards, icon: Gift },
+    { id: 'zanimljivosti', label: t.nav.facts, icon: Lightbulb },
   ] as const;
 
   return (

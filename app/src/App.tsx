@@ -8,10 +8,11 @@ import MapScreen from './components/MapScreen';
 import ChatScreen from './components/ChatScreen';
 import InfoScreen from './components/InfoScreen';
 import ScanHistoryScreen from './components/ScanHistoryScreen';
+import ZanimljivostiScreen from './components/ZanimljivostiScreen';
 import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 
-export type Tab = 'skener' | 'karta' | 'chat' | 'nagrade';
+export type Tab = 'skener' | 'karta' | 'chat' | 'nagrade' | 'zanimljivosti';
 
 export default function App() {
   const { isLoggedIn, isLoading } = useAuth();
@@ -55,6 +56,7 @@ export default function App() {
               {currentTab === 'karta' && <MapScreen />}
               {currentTab === 'chat' && <ChatScreen />}
               {currentTab === 'nagrade' && <NagradeScreen />}
+              {currentTab === 'zanimljivosti' && <ZanimljivostiScreen />}
             </>
           )}
         </main>
