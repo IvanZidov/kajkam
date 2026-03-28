@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { Camera, Upload, Trash2, Award, ChevronRight, Leaf, History, RotateCcw, AlertCircle, Clock, X, Lightbulb } from 'lucide-react';
+import { Camera, Upload, Trash2, Award, ChevronRight, Leaf, History, RotateCcw, AlertCircle, Clock, Lightbulb } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -43,7 +43,7 @@ const BG_CLASSES: Record<WasteItem['binColor'], string> = {
   'waste-mixed': 'bg-waste-mixed',
 };
 
-export default function ScannerScreen() {
+export default function ScannerScreen({ onShowHistory }: { onShowHistory?: () => void }) {
   const { t } = useTranslation();
   const { user } = useAuth();
 
@@ -61,37 +61,27 @@ export default function ScannerScreen() {
   const [errorMsg, setErrorMsg] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  const [showHistory, setShowHistory] = useState(false);
-  const [scanHistory, setScanHistory] = useState<Array<{
-    id: string;
-    items: WasteItem[];
-    co2_saved: number;
-    points_earned: number;
-    image_url: string | null;
-    created_at: string;
-  }>>([]);
   const [todayCount, setTodayCount] = useState(0);
   const [totalCo2, setTotalCo2] = useState(0);
+  const [totalScans, setTotalScans] = useState(0);
 
-  // Load scan history
+  // Load scan stats
   useEffect(() => {
     if (!user) return;
     const today = new Date().toISOString().split('T')[0];
-    // Fetch all scans for history + stats
     supabase
       .from('scan_history')
-      .select('id, items, co2_saved, points_earned, image_url, created_at')
+      .select('co2_saved, created_at')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
       .then(({ data, error }) => {
         if (error) { console.error('scan_history fetch error:', error); return; }
         if (data) {
-          setScanHistory(data);
+          setTotalScans(data.length);
           setTodayCount(data.filter(s => s.created_at.startsWith(today)).length);
           setTotalCo2(data.reduce((sum, s) => sum + Number(s.co2_saved), 0));
         }
       });
-  }, [user, scanState]); // re-fetch when scanState changes (i.e., after a new scan)
+  }, [user, scanState]);
 
   const analyzeImage = async (base64Data: string, mimeType: string) => {
     setScanState('scanning');
@@ -195,7 +185,7 @@ export default function ScannerScreen() {
   const totalPoints = result?.items.reduce((sum, i) => sum + i.ecoPoints, 0) ?? 0;
 
   return (
-    <div className="px-6 py-6 space-y-6 flex flex-col items-center">
+    <div className="px-6 py-4 space-y-4 flex flex-col items-center">
       {/* Hidden file inputs */}
       <input
         ref={fileInputRef}
@@ -213,30 +203,12 @@ export default function ScannerScreen() {
         onChange={handleFileSelect}
       />
 
-      {/* Status bar */}
-      <div className="flex items-center gap-2 bg-surface-container-low px-4 py-2 shield-motif self-center">
-        <span className={`w-2 h-2 rounded-full ${
-          scanState === 'result' ? 'bg-blue-500' :
-          scanState === 'error' ? 'bg-red-500' :
-          scanState === 'scanning' ? 'bg-yellow-500 animate-pulse' :
-          'bg-green-500 animate-pulse'
-        }`}></span>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-          Status: {
-            scanState === 'result' ? t.scanner.statusDetected :
-            scanState === 'error' ? t.scanner.statusError :
-            scanState === 'scanning' ? t.scanner.statusScanning :
-            t.scanner.statusReady
-          }
-        </span>
-      </div>
-
       {/* Ready state — camera/upload buttons */}
       {scanState === 'ready' && (
-        <div className="w-full aspect-square max-w-xl bg-surface-container-lowest shield-motif shadow-sm border border-outline-variant/15 flex flex-col items-center justify-center relative overflow-hidden group">
+        <div className="w-full max-w-xl bg-surface-container-lowest shield-motif shadow-sm border border-outline-variant/15 flex flex-col items-center justify-center relative overflow-hidden group py-6 sm:py-8">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
 
-          <div className="w-64 h-64 sm:w-80 sm:h-80 border-2 border-dashed border-primary/20 rounded-xl flex flex-col items-center justify-center relative gap-6">
+          <div className="w-56 h-56 sm:w-72 sm:h-72 border-2 border-dashed border-primary/20 rounded-xl flex flex-col items-center justify-center relative gap-4">
             <div className="absolute -top-1 -left-1 w-4 h-4 border-t-4 border-l-4 border-primary"></div>
             <div className="absolute -top-1 -right-1 w-4 h-4 border-t-4 border-r-4 border-primary"></div>
             <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-4 border-l-4 border-primary"></div>
@@ -246,8 +218,8 @@ export default function ScannerScreen() {
               onClick={() => cameraInputRef.current?.click()}
               className="group active:scale-95 transition-all duration-300 flex flex-col items-center gap-3"
             >
-              <div className="w-24 h-24 sm:w-28 sm:h-28 bg-primary rounded-full flex items-center justify-center shadow-lg group-hover:bg-primary-container transition-colors">
-                <Camera className="text-on-primary w-12 h-12 sm:w-14 sm:h-14" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary rounded-full flex items-center justify-center shadow-lg group-hover:bg-primary-container transition-colors">
+                <Camera className="text-on-primary w-10 h-10 sm:w-12 sm:h-12" />
               </div>
               <span className="font-black text-primary tracking-tighter text-lg uppercase">
                 {t.scanner.takePhoto}
@@ -262,18 +234,12 @@ export default function ScannerScreen() {
               <span className="text-xs font-bold text-primary uppercase tracking-wider">{t.scanner.chooseFromGallery}</span>
             </button>
           </div>
-
-          <div className="mt-6 flex items-center gap-3 px-6 py-2 bg-primary/5 rounded-full">
-            <span className="text-[11px] text-primary/80 italic">
-              {t.scanner.photoHint}
-            </span>
-          </div>
         </div>
       )}
 
       {/* Scanning state */}
       {scanState === 'scanning' && (
-        <div className="w-full aspect-square max-w-xl bg-surface-container-lowest shield-motif shadow-sm border border-outline-variant/15 flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="w-full max-w-xl min-h-[200px] py-10 sm:py-12 bg-surface-container-lowest shield-motif shadow-sm border border-outline-variant/15 flex flex-col items-center justify-center relative overflow-hidden">
           {imagePreview && (
             <img src={imagePreview} alt="Uploaded" className="absolute inset-0 w-full h-full object-cover opacity-30" />
           )}
@@ -329,6 +295,15 @@ export default function ScannerScreen() {
               <p className="text-[10px] text-center uppercase tracking-[0.2em] font-bold text-on-surface-variant">
                 {result.items.length > 0 ? t.scanner.analysisSuccess : t.scanner.noWasteDetected}
               </p>
+
+              {result.items.length === 0 && (
+                <div className="bg-surface-container-low shield-motif shadow-sm p-6 flex flex-col items-center gap-3 text-center">
+                  <div className="w-16 h-16 bg-on-surface-variant/10 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-8 h-8 text-on-surface-variant/60" />
+                  </div>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">{t.scanner.noWasteDescription}</p>
+                </div>
+              )}
 
               {result.items.map((item, idx) => (
                 <div key={idx} className={`bg-surface-container-low shield-motif border-l-8 ${BORDER_CLASSES[item.binColor]} shadow-sm overflow-hidden`}>
@@ -391,83 +366,14 @@ export default function ScannerScreen() {
           <p className="text-lg font-black text-primary">{todayCount} {t.scanner.times}</p>
         </div>
         <button
-          onClick={() => setShowHistory(true)}
+          onClick={onShowHistory}
           className="bg-surface-container-low p-4 shield-motif space-y-1 text-left hover:bg-surface-container transition-colors"
         >
           <History className="text-primary w-5 h-5 mb-2" />
           <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-tight text-on-surface-variant">Povijest</p>
-          <p className="text-lg font-black text-primary">{scanHistory.length}</p>
+          <p className="text-lg font-black text-primary">{totalScans}</p>
         </button>
       </div>
-
-      {/* History overlay */}
-      {showHistory && (
-        <div className="fixed inset-0 z-50 bg-surface/95 backdrop-blur-sm overflow-y-auto">
-          <div className="max-w-xl mx-auto px-4 py-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-black text-primary uppercase tracking-tight">Povijest skeniranja</h2>
-              <button onClick={() => setShowHistory(false)} className="p-2 text-outline hover:text-on-surface">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {scanHistory.length === 0 ? (
-              <div className="text-center py-12">
-                <History className="w-12 h-12 text-outline mx-auto mb-3" />
-                <p className="text-sm text-on-surface-variant">Još nema skeniranja</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {scanHistory.map((scan) => (
-                  <div key={scan.id} className="bg-surface-container-lowest shield-motif shadow-sm border border-outline-variant/10 overflow-hidden">
-                    <div className="flex gap-3 p-4">
-                      {scan.image_url && (
-                        <img
-                          src={scan.image_url}
-                          alt="Scan"
-                          className="w-20 h-20 object-cover shield-motif shrink-0"
-                        />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-bold text-outline uppercase tracking-wider mb-1.5">
-                          {new Date(scan.created_at).toLocaleDateString('hr-HR', {
-                            day: 'numeric', month: 'short', year: 'numeric',
-                            hour: '2-digit', minute: '2-digit',
-                          })}
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {(scan.items as WasteItem[]).map((item, i) => (
-                            <span
-                              key={i}
-                              className={`text-[10px] font-bold uppercase px-2 py-0.5 shield-motif text-black ${BG_CLASSES[item.binColor] || 'bg-surface-container'}`}
-                            >
-                              {item.name}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex items-center gap-3 mt-2">
-                          <span className="text-[10px] font-bold text-primary">+{scan.points_earned} EkoBodova</span>
-                          <span className="text-[10px] text-on-surface-variant">{Number(scan.co2_saved).toFixed(2)} kg CO₂</span>
-                        </div>
-                        {(scan.items as WasteItem[]).some(i => i.tip) && (
-                          <div className="mt-2 space-y-1">
-                            {(scan.items as WasteItem[]).filter(i => i.tip).map((item, i) => (
-                              <div key={i} className="flex items-start gap-1.5">
-                                <Lightbulb className="w-3 h-3 text-primary/50 shrink-0 mt-0.5" />
-                                <p className="text-[10px] text-on-surface-variant leading-snug">{item.tip}</p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -6,7 +6,8 @@ export interface Translations {
     scanner: string;
     map: string;
     chat: string;
-    profile: string;
+    rewards: string;
+    facts: string;
   };
   login: {
     greeting: string;
@@ -19,21 +20,29 @@ export interface Translations {
     ecoInitiative: string;
   };
   profile: {
-    sectionLabel: string;
     greeting: (name: string) => string;
-    thankYou: string;
-    yourEcoPoints: string;
-    pointsRemaining: (n: number) => string;
-    bagPackReward: string;
     qrTitle: string;
     qrSubtitle: string;
-    availableRewards: string;
-    rewardsDescription: string;
-    claimReward: string;
     signOut: string;
     signInWithGoogle: string;
     guest: string;
     user: string;
+  };
+  rewards: {
+    sectionLabel: string;
+    yourEcoPoints: string;
+    pointsRemaining: (n: number) => string;
+    claimReward: string;
+    notEnoughPoints: string;
+    pointsNeeded: (n: number) => string;
+    nextReward: string;
+    items: {
+      zgBags: { name: string; description: string };
+      zetDaily: { name: string; description: string };
+      compost: { name: string; description: string };
+      zetDiscount: { name: string; description: string };
+      zooTicket: { name: string; description: string };
+    };
   };
   scanner: {
     statusReady: string;
@@ -70,6 +79,7 @@ export interface Translations {
     quickPrompt2: string;
     quickPrompt3: string;
     assistantLabel: string;
+    clearChat: string;
   };
   map: {
     searchPlaceholder: string;
@@ -109,6 +119,10 @@ export interface Translations {
     reportedOn: string;
     guestReportNote: string;
     cancelReport: string;
+    deleteReport: string;
+    deleteConfirm: string;
+    useMyLocation: string;
+    orTapMap: string;
   };
   ai: {
     scannerSystemPrompt: string;
@@ -146,6 +160,19 @@ export interface Translations {
     compostingDesc: string;
     source: string;
   };
+  facts: {
+    title: string;
+    dailyFact: string;
+    dailyQuiz: string;
+    markAsRead: string;
+    alreadyRead: string;
+    submitAnswer: string;
+    correct: string;
+    incorrect: string;
+    alreadyAnswered: string;
+    pointsEarned: (n: number) => string;
+    comeBackTomorrow: string;
+  };
   binLabels: {
     plastika: string;
     papir: string;
@@ -163,7 +190,8 @@ export const hr: Translations = {
     scanner: 'Skener',
     map: 'Karta',
     chat: 'Chat',
-    profile: 'Profil',
+    rewards: 'Nagrade',
+    facts: 'Činjenice',
   },
   login: {
     greeting: 'Bok, Zagreb!',
@@ -176,21 +204,29 @@ export const hr: Translations = {
     ecoInitiative: 'Eko Inicijativa',
   },
   profile: {
-    sectionLabel: 'MOJ PROFIL',
     greeting: (name) => `Bok, ${name}!`,
-    thankYou: 'Hvala što brineš o čistoći svog kvarta.',
-    yourEcoPoints: 'Tvoji EkoBodovi',
-    pointsRemaining: (n) => `Još ${n} bodova`,
-    bagPackReward: 'Paket ZG vrećica',
     qrTitle: 'IDENTIFIKACIJSKI QR',
     qrSubtitle: 'Pokaži na reciklažnom dvorištu za bodove',
-    availableRewards: 'DOSTUPNE NAGRADE',
-    rewardsDescription: 'Sakupi bodove recikliranjem i otključaj kupone za javni prijevoz ili ZG vrećice.',
-    claimReward: 'Preuzmi nagradu',
     signOut: 'Odjavi se',
     signInWithGoogle: 'Prijavi se s Google-om',
     guest: 'Gost',
     user: 'Korisnik',
+  },
+  rewards: {
+    sectionLabel: 'NAGRADE',
+    yourEcoPoints: 'Tvoji EkoBodovi',
+    pointsRemaining: (n) => `Još ${n} bodova`,
+    claimReward: 'Preuzmi',
+    notEnoughPoints: 'Nedovoljno bodova',
+    pointsNeeded: (n) => `Treba ti još ${n} bodova`,
+    nextReward: 'Do sljedeće nagrade',
+    items: {
+      zgBags: { name: 'ZG vrećice', description: 'Paket službenih zagrebačkih vrećica za otpad' },
+      zetDaily: { name: 'ZET dnevna karta', description: 'Dnevna karta za javni prijevoz' },
+      compost: { name: 'Kompost 25L', description: 'Vreća kvalitetnog komposta za vrt ili balkon' },
+      zetDiscount: { name: 'Popust za ZET', description: '20% popust na mjesečnu kartu javnog prijevoza' },
+      zooTicket: { name: 'Maksimir Zoo ulaznica', description: 'Besplatna ulaznica za Zoološki vrt Maksimir' },
+    },
   },
   scanner: {
     statusReady: 'Spremno',
@@ -206,6 +242,7 @@ export const hr: Translations = {
     tryAgain: 'Pokušaj Ponovo',
     analysisSuccess: 'Analiza Uspješna',
     noWasteDetected: 'Nema Prepoznatog Otpada',
+    noWasteDescription: 'Na slici nije pronađen otpad. Pokušaj s drugom fotografijom na kojoj je jasno vidljiv predmet za odlaganje.',
     geminiRecognized: (count) =>
       `Gemini je prepoznao ${count} ${count === 1 ? 'predmet' : 'predmeta'}`,
     disposeIn: 'Odloži u:',
@@ -218,7 +255,7 @@ export const hr: Translations = {
     times: 'puta',
   },
   chat: {
-    banner: 'ZG Eko-Asistent — Powered by Gemini',
+    banner: 'ZG Eko-Asistent',
     welcomeMessage: 'Bok! Ja sam tvoj ZG Eko-Asistent. Kako ti mogu pomoći s recikliranjem danas?',
     thinkingMessage: 'Razmišljam...',
     errorMessage: 'Ups, došlo je do greške. Pokušaj ponovo.',
@@ -229,6 +266,7 @@ export const hr: Translations = {
     quickPrompt2: 'Što je glomazni otpad?',
     quickPrompt3: 'Čašice od jogurta?',
     assistantLabel: 'ZG Eko-Asistent',
+    clearChat: 'Obriši chat',
   },
   map: {
     searchPlaceholder: 'Pretraži ulicu ili vrstu...',
@@ -268,6 +306,10 @@ export const hr: Translations = {
     reportedOn: 'Prijavljeno',
     guestReportNote: 'Prijavi se za EkoBodove',
     cancelReport: 'Odustani',
+    deleteReport: 'Ukloni prijavu',
+    deleteConfirm: 'Sigurno želiš ukloniti ovu prijavu?',
+    useMyLocation: 'Koristi moju lokaciju',
+    orTapMap: 'ili dodirni kartu',
   },
   ai: {
     scannerSystemPrompt: `Ti si AI sustav za prepoznavanje otpada u Zagrebu, Hrvatska.
@@ -393,6 +435,19 @@ Ako ne znaš točnu lokaciju spremnika, predloži da korisnik provjeri na karti 
     compostingDesc: 'Grad dijeli besplatne kompostere kućanstvima s vrtom. Tko kompostira može tražiti manji smeđi spremnik.',
     source: 'Izvor: cistoca.hr | Grad Zagreb',
   },
+  facts: {
+    title: 'Dnevne Zanimljivosti',
+    dailyFact: 'Zanimljivost Dana',
+    dailyQuiz: 'Kviz Dana',
+    markAsRead: 'Pročitano! (+1 bod)',
+    alreadyRead: 'Već pročitano danas ✓',
+    submitAnswer: 'Potvrdi odgovor',
+    correct: 'Točno! Bravo! 🎉',
+    incorrect: 'Netočno. Pokušaj sutra!',
+    alreadyAnswered: 'Već odgovoreno danas',
+    pointsEarned: (n) => `+${n} EkoBod${n === 1 ? '' : n < 5 ? 'a' : 'ova'}`,
+    comeBackTomorrow: 'Dođi sutra po nove zanimljivosti!',
+  },
   binLabels: {
     plastika: 'Plastika i Metal',
     papir: 'Papir i Karton',
@@ -410,7 +465,8 @@ export const en: Translations = {
     scanner: 'Scanner',
     map: 'Map',
     chat: 'Chat',
-    profile: 'Profile',
+    rewards: 'Rewards',
+    facts: 'Facts',
   },
   login: {
     greeting: 'Hello, Zagreb!',
@@ -423,21 +479,29 @@ export const en: Translations = {
     ecoInitiative: 'Eco Initiative',
   },
   profile: {
-    sectionLabel: 'MY PROFILE',
     greeting: (name) => `Hello, ${name}!`,
-    thankYou: 'Thank you for keeping your neighbourhood clean.',
-    yourEcoPoints: 'Your EcoPoints',
-    pointsRemaining: (n) => `${n} more points`,
-    bagPackReward: 'ZG Bag Package',
     qrTitle: 'IDENTIFICATION QR',
     qrSubtitle: 'Show at recycling yard for points',
-    availableRewards: 'AVAILABLE REWARDS',
-    rewardsDescription: 'Collect points by recycling and unlock coupons for public transport or ZG bags.',
-    claimReward: 'Claim reward',
     signOut: 'Sign out',
     signInWithGoogle: 'Sign in with Google',
     guest: 'Guest',
     user: 'User',
+  },
+  rewards: {
+    sectionLabel: 'REWARDS',
+    yourEcoPoints: 'Your EcoPoints',
+    pointsRemaining: (n) => `${n} more points`,
+    claimReward: 'Claim',
+    notEnoughPoints: 'Not enough points',
+    pointsNeeded: (n) => `You need ${n} more points`,
+    nextReward: 'To next reward',
+    items: {
+      zgBags: { name: 'ZG Waste Bags', description: 'Pack of official Zagreb waste bags' },
+      zetDaily: { name: 'ZET Daily Pass', description: 'Daily public transport ticket' },
+      compost: { name: 'Compost 25L', description: 'Bag of quality compost for garden or balcony' },
+      zetDiscount: { name: 'ZET Discount', description: '20% discount on monthly public transport pass' },
+      zooTicket: { name: 'Maksimir Zoo Ticket', description: 'Free entry to Zagreb Zoo Maksimir' },
+    },
   },
   scanner: {
     statusReady: 'Ready',
@@ -453,6 +517,7 @@ export const en: Translations = {
     tryAgain: 'Try Again',
     analysisSuccess: 'Analysis Successful',
     noWasteDetected: 'No Waste Detected',
+    noWasteDescription: 'No waste was found in the image. Try again with a different photo where the item to dispose of is clearly visible.',
     geminiRecognized: (count) =>
       `Gemini recognized ${count} item${count === 1 ? '' : 's'}`,
     disposeIn: 'Dispose in:',
@@ -465,7 +530,7 @@ export const en: Translations = {
     times: 'times',
   },
   chat: {
-    banner: 'ZG Eco-Assistant — Powered by Gemini',
+    banner: 'ZG Eco-Assistant',
     welcomeMessage: "Hi! I'm your ZG Eco-Assistant. How can I help you with recycling today?",
     thinkingMessage: 'Thinking...',
     errorMessage: 'Oops, an error occurred. Please try again.',
@@ -476,6 +541,7 @@ export const en: Translations = {
     quickPrompt2: 'What is bulky waste?',
     quickPrompt3: 'Yogurt cups?',
     assistantLabel: 'ZG Eco-Assistant',
+    clearChat: 'Clear chat',
   },
   map: {
     searchPlaceholder: 'Search street or type...',
@@ -515,6 +581,10 @@ export const en: Translations = {
     reportedOn: 'Reported on',
     guestReportNote: 'Sign in for EcoPoints',
     cancelReport: 'Cancel',
+    deleteReport: 'Remove report',
+    deleteConfirm: 'Are you sure you want to remove this report?',
+    useMyLocation: 'Use my location',
+    orTapMap: 'or tap the map',
   },
   ai: {
     scannerSystemPrompt: `You are an AI waste recognition system for Zagreb, Croatia.
@@ -639,6 +709,19 @@ If you don't know the exact bin location, suggest the user check the Map tab in 
     composting: 'Home composting',
     compostingDesc: 'The city distributes free composters to households with gardens. Those who compost can request a smaller brown bin.',
     source: 'Source: cistoca.hr | City of Zagreb',
+  },
+  facts: {
+    title: 'Daily Fun Facts',
+    dailyFact: 'Fact of the Day',
+    dailyQuiz: 'Quiz of the Day',
+    markAsRead: 'Mark as Read (+1 pt)',
+    alreadyRead: 'Already read today ✓',
+    submitAnswer: 'Submit Answer',
+    correct: 'Correct! Well done! 🎉',
+    incorrect: 'Incorrect. Try again tomorrow!',
+    alreadyAnswered: 'Already answered today',
+    pointsEarned: (n) => `+${n} EcoPoint${n === 1 ? '' : 's'}`,
+    comeBackTomorrow: 'Come back tomorrow for new facts!',
   },
   binLabels: {
     plastika: 'Plastics & Metal',
