@@ -13,8 +13,8 @@ export default function BottomNav({ currentTab, onTabChange }: BottomNavProps) {
     { id: 'skener', label: t.nav.scanner, icon: Camera },
     { id: 'karta', label: t.nav.map, icon: MapIcon },
     { id: 'chat', label: t.nav.chat, icon: MessageSquare },
-    { id: 'nagrade', label: t.nav.rewards, icon: Gift },
     { id: 'zanimljivosti', label: t.nav.facts, icon: Lightbulb },
+    { id: 'nagrade', label: t.nav.rewards, icon: Gift },
   ] as const;
 
   return (
