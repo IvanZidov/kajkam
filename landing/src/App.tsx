@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HelpCircle, Trash2, Truck, Radio, LineChart, Leaf, Globe, BookOpen, MessageCircle, Gift, Camera, ArrowRight, AlertTriangle, Linkedin, Code, Sparkles, Server, Database, MapPin, LogIn, Rocket, Building2, Palette, Bot, PenTool, ExternalLink } from 'lucide-react';
+import { HelpCircle, Trash2, Truck, Radio, LineChart, Leaf, Globe, BookOpen, MessageCircle, Gift, Camera, ArrowRight, AlertTriangle, Linkedin, Code, Sparkles, Server, Database, MapPin, LogIn, Rocket, Building2, Palette, Bot, PenTool, ExternalLink, Menu, X } from 'lucide-react';
 
 const translations = {
   hr: {
@@ -200,6 +200,7 @@ const translations = {
 
 export default function App() {
   const [lang, setLang] = useState<'hr' | 'en'>('hr');
+  const [menuOpen, setMenuOpen] = useState(false);
   const t = translations[lang];
   const screenshots = `/screenshots-${lang}`;
 
@@ -207,10 +208,10 @@ export default function App() {
     <div className="bg-surface font-body text-on-surface selection:bg-primary-fixed min-h-screen">
       {/* TopNavBar */}
       <nav className="fixed top-0 w-full z-50 bg-[#FBF9F8]/80 backdrop-blur-xl shadow-sm">
-        <div className="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="KAJ-KAM?" className="h-12" />
-            <span className="text-2xl font-black tracking-tighter text-[#004482]">KAJ-KAM?</span>
+        <div className="flex justify-between items-center px-4 sm:px-8 h-16 sm:h-20 max-w-7xl mx-auto">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src="/logo.png" alt="KAJ-KAM?" className="h-10 sm:h-12" />
+            <span className="text-xl sm:text-2xl font-black tracking-tighter text-[#004482]">KAJ-KAM?</span>
           </div>
           <div className="hidden md:flex gap-8 items-center font-headline font-bold tracking-[0.08em] uppercase text-sm">
             <a className="text-slate-600 hover:text-[#004482] transition-colors" href="#problem">{t.navProblem}</a>
@@ -228,22 +229,50 @@ export default function App() {
               {t.navCta}
             </a>
           </div>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden text-[#004482] p-2"
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X className="w-6 h-6" strokeWidth={2} /> : <Menu className="w-6 h-6" strokeWidth={2} />}
+          </button>
         </div>
       </nav>
 
+      {menuOpen && (
+        <div className="fixed inset-0 top-20 z-40 bg-[#FBF9F8] md:hidden">
+          <div className="flex flex-col items-center gap-6 pt-10 font-headline font-bold tracking-[0.08em] uppercase text-sm">
+            <a className="text-slate-600 hover:text-[#004482] transition-colors" href="#problem" onClick={() => setMenuOpen(false)}>{t.navProblem}</a>
+            <a className="text-slate-600 hover:text-[#004482] transition-colors" href="#kako-radi" onClick={() => setMenuOpen(false)}>{t.navHowItWorks}</a>
+            <a className="text-slate-600 hover:text-[#004482] transition-colors" href="#mogucnosti" onClick={() => setMenuOpen(false)}>{t.navFeatures}</a>
+            <a className="text-slate-600 hover:text-[#004482] transition-colors" href="#za-grad" onClick={() => setMenuOpen(false)}>{t.navForCity}</a>
+            <button
+              onClick={() => { setLang(lang === 'hr' ? 'en' : 'hr'); setMenuOpen(false); }}
+              className="flex items-center gap-1.5 text-slate-600 hover:text-[#004482] transition-colors"
+            >
+              <Globe className="w-4 h-4" strokeWidth={2} />
+              {lang.toUpperCase()}
+            </button>
+            <a href="https://app.kajkam.net/" target="_blank" rel="noopener noreferrer" className="bg-primary text-on-primary px-8 py-3 asymmetric-shield active:scale-95 duration-200 transition-opacity hover:opacity-80 mt-2" onClick={() => setMenuOpen(false)}>
+              {t.navCta}
+            </a>
+          </div>
+        </div>
+      )}
+
       <main className="pt-20">
         {/* Section 1: Hero */}
-        <section className="relative min-h-[921px] flex items-center bg-surface pt-12 pb-20 lg:pb-24 overflow-x-hidden">
-          <div className="max-w-7xl mx-auto px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <section className="relative flex items-center bg-surface pt-8 sm:pt-12 pb-12 sm:pb-20 lg:pb-24 overflow-x-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
             <div className="lg:col-span-7 z-10">
               <div className="inline-block py-1 px-3 bg-secondary-fixed text-on-secondary-fixed text-xs font-bold tracking-[0.2em] uppercase mb-6 asymmetric-shield">
                 {t.heroTag}
               </div>
-              <h1 className="text-6xl md:text-8xl font-black text-primary uppercase editorial-line-height tracking-tighter mb-6">
+              <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-primary uppercase editorial-line-height tracking-tighter mb-6">
                 KAJ-KAM?<br />
                 <span className="text-on-surface-variant">{t.heroHeading2}</span>
               </h1>
-              <p className="text-xl md:text-2xl text-on-surface-variant mb-10 max-w-xl leading-relaxed">
+              <p className="text-lg sm:text-xl md:text-2xl text-on-surface-variant mb-8 sm:mb-10 max-w-xl leading-relaxed">
                 {t.heroDesc}
               </p>
               <div className="flex flex-wrap gap-4">
@@ -255,8 +284,8 @@ export default function App() {
                 </a>
               </div>
             </div>
-            <div className="lg:col-span-5 flex flex-col sm:flex-row items-center justify-center gap-10 lg:gap-12 shrink-0">
-              <div className="relative w-64 h-[540px] bg-on-surface rounded-[3rem] p-4 shadow-2xl shrink-0">
+            <div className="lg:col-span-5 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 lg:gap-12 shrink-0">
+              <div className="relative w-48 h-[400px] sm:w-64 sm:h-[540px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-3 sm:p-4 shadow-2xl shrink-0">
                 <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                   <img
                     alt="KAJ-KAM? App Preview"
@@ -283,17 +312,17 @@ export default function App() {
         </section>
 
         {/* Section: About Us */}
-        <section className="py-32 bg-surface" id="o-nama">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="text-center mb-20">
+        <section className="py-16 sm:py-24 md:py-32 bg-surface" id="o-nama">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="text-center mb-10 md:mb-20">
               <span className="text-secondary font-bold tracking-[0.3em] uppercase text-xs block mb-4">{t.aboutLabel}</span>
-              <h2 className="text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.aboutHeading}</h2>
-              <p className="text-on-surface-variant text-xl max-w-2xl mx-auto">{t.aboutDesc}</p>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.aboutHeading}</h2>
+              <p className="text-on-surface-variant text-lg sm:text-xl max-w-2xl mx-auto">{t.aboutDesc}</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
               {/* Jurica */}
-              <div className="bg-surface-container-lowest p-10 asymmetric-shield flex flex-col items-center text-center gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
-                <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg">
+              <div className="bg-surface-container-lowest p-6 sm:p-10 asymmetric-shield flex flex-col items-center text-center gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
+                <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-full overflow-hidden shadow-lg">
                   <img src="/jurica.jpg" alt={t.aboutJuricaName} className="w-full h-full object-cover" />
                 </div>
                 <div>
@@ -306,8 +335,8 @@ export default function App() {
                 </a>
               </div>
               {/* Ivan */}
-              <div className="bg-surface-container-lowest p-10 asymmetric-shield flex flex-col items-center text-center gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
-                <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg">
+              <div className="bg-surface-container-lowest p-6 sm:p-10 asymmetric-shield flex flex-col items-center text-center gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
+                <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-full overflow-hidden shadow-lg">
                   <img src="/ivan.jpg" alt={t.aboutIvanName} className="w-full h-full object-cover" />
                 </div>
                 <div>
@@ -324,28 +353,28 @@ export default function App() {
         </section>
 
         {/* Section 2: Problem */}
-        <section className="py-32 bg-surface-container-low" id="problem">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="mb-20">
+        <section className="py-16 sm:py-24 md:py-32 bg-surface-container-low" id="problem">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="mb-10 md:mb-20">
               <span className="text-secondary font-bold tracking-[0.3em] uppercase text-xs block mb-4">{t.problemLabel}</span>
-              <h2 className="text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter">{t.problemHeading}</h2>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter">{t.problemHeading}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-surface-container-lowest p-10 asymmetric-shield flex flex-col items-start gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
+              <div className="bg-surface-container-lowest p-6 sm:p-10 asymmetric-shield flex flex-col items-start gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
                 <div className="w-16 h-16 bg-surface-container flex items-center justify-center asymmetric-shield">
                   <HelpCircle className="text-primary w-8 h-8" strokeWidth={2} />
                 </div>
                 <h3 className="text-2xl font-black text-primary uppercase tracking-tight">{t.problemCard1Title}</h3>
                 <p className="text-on-surface-variant leading-relaxed">{t.problemCard1Desc}</p>
               </div>
-              <div className="bg-surface-container-lowest p-10 asymmetric-shield flex flex-col items-start gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
+              <div className="bg-surface-container-lowest p-6 sm:p-10 asymmetric-shield flex flex-col items-start gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
                 <div className="w-16 h-16 bg-surface-container flex items-center justify-center asymmetric-shield">
                   <Trash2 className="text-primary w-8 h-8" strokeWidth={2} />
                 </div>
                 <h3 className="text-2xl font-black text-primary uppercase tracking-tight">{t.problemCard2Title}</h3>
                 <p className="text-on-surface-variant leading-relaxed">{t.problemCard2Desc}</p>
               </div>
-              <div className="bg-surface-container-lowest p-10 asymmetric-shield flex flex-col items-start gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
+              <div className="bg-surface-container-lowest p-6 sm:p-10 asymmetric-shield flex flex-col items-start gap-6 group hover:translate-y-[-8px] transition-transform duration-300">
                 <div className="w-16 h-16 bg-surface-container flex items-center justify-center asymmetric-shield">
                   <Truck className="text-primary w-8 h-8" strokeWidth={2} />
                 </div>
@@ -357,17 +386,17 @@ export default function App() {
         </section>
 
         {/* Section 3: Kako radi? - AI Scanner Flow */}
-        <section className="py-32 bg-surface" id="kako-radi">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="text-center mb-24">
+        <section className="py-16 sm:py-24 md:py-32 bg-surface" id="kako-radi">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="text-center mb-12 md:mb-24">
               <span className="text-secondary font-bold tracking-[0.3em] uppercase text-xs block mb-4">{t.howLabel}</span>
-              <h2 className="text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.howHeading}</h2>
-              <p className="text-on-surface-variant text-xl max-w-2xl mx-auto">{t.howDesc}</p>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.howHeading}</h2>
+              <p className="text-on-surface-variant text-lg sm:text-xl max-w-2xl mx-auto">{t.howDesc}</p>
             </div>
 
             <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-6 lg:gap-12 mb-16">
               <div className="flex flex-col items-center gap-4">
-                <div className="relative w-56 h-[480px] bg-on-surface rounded-[3rem] p-3 shadow-2xl">
+                <div className="relative w-44 h-[380px] sm:w-56 sm:h-[480px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-2.5 sm:p-3 shadow-2xl">
                   <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                     <img alt="Scan - start" className="w-full h-full object-cover" src={`${screenshots}/scan.png`} />
                   </div>
@@ -381,7 +410,7 @@ export default function App() {
               <ArrowRight className="hidden md:block text-primary/30 w-8 h-8 flex-shrink-0" strokeWidth={2} />
 
               <div className="flex flex-col items-center gap-4">
-                <div className="relative w-56 h-[480px] bg-on-surface rounded-[3rem] p-3 shadow-2xl">
+                <div className="relative w-44 h-[380px] sm:w-56 sm:h-[480px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-2.5 sm:p-3 shadow-2xl">
                   <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                     <img alt="Scan - AI results" className="w-full h-full object-cover" src={`${screenshots}/scan2.png`} />
                   </div>
@@ -395,7 +424,7 @@ export default function App() {
               <ArrowRight className="hidden md:block text-primary/30 w-8 h-8 flex-shrink-0" strokeWidth={2} />
 
               <div className="flex flex-col items-center gap-4">
-                <div className="relative w-56 h-[480px] bg-on-surface rounded-[3rem] p-3 shadow-2xl">
+                <div className="relative w-44 h-[380px] sm:w-56 sm:h-[480px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-2.5 sm:p-3 shadow-2xl">
                   <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                     <img alt="Scan - points earned" className="w-full h-full object-cover" src={`${screenshots}/scan3.png`} />
                   </div>
@@ -410,13 +439,13 @@ export default function App() {
         </section>
 
         {/* Section 4: Gamification & Rewards */}
-        <section className="py-32 bg-surface-container-low">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="flex flex-col md:flex-row items-center gap-16">
+        <section className="py-16 sm:py-24 md:py-32 bg-surface-container-low">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
               <div className="flex-1 space-y-6">
                 <span className="text-secondary font-bold tracking-[0.3em] uppercase text-xs block">{t.gamLabel}</span>
-                <h2 className="text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter">{t.gamHeading}</h2>
-                <p className="text-xl text-on-surface-variant leading-relaxed max-w-lg">{t.gamDesc}</p>
+                <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter">{t.gamHeading}</h2>
+                <p className="text-lg sm:text-lg sm:text-xl text-on-surface-variant leading-relaxed max-w-lg">{t.gamDesc}</p>
                 <div className="space-y-4 pt-4">
                   <div className="flex items-center gap-3">
                     <Camera className="text-primary w-5 h-5" strokeWidth={2} />
@@ -437,12 +466,12 @@ export default function App() {
                 </div>
               </div>
               <div className="flex-1 w-full flex justify-center gap-6">
-                <div className="relative w-56 h-[480px] bg-on-surface rounded-[3rem] p-3 shadow-2xl -rotate-2">
+                <div className="relative w-44 h-[380px] sm:w-56 sm:h-[480px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-2.5 sm:p-3 shadow-2xl -rotate-2">
                   <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                     <img alt="EkoBodovi and QR" className="w-full h-full object-cover" src={`${screenshots}/rewards.png`} loading="lazy" />
                   </div>
                 </div>
-                <div className="hidden lg:block relative w-56 h-[480px] bg-on-surface rounded-[3rem] p-3 shadow-2xl rotate-2 mt-8">
+                <div className="hidden lg:block relative w-44 h-[380px] sm:w-56 sm:h-[480px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-2.5 sm:p-3 shadow-2xl rotate-2 mt-8">
                   <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                     <img alt="Rewards catalog" className="w-full h-full object-cover" src={`${screenshots}/rewards2.png`} loading="lazy" />
                   </div>
@@ -453,26 +482,26 @@ export default function App() {
         </section>
 
         {/* Section 5: Features - Map, Education, Chat, Multilingual */}
-        <section className="py-32 bg-surface" id="mogucnosti">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="text-center mb-24">
+        <section className="py-16 sm:py-24 md:py-32 bg-surface" id="mogucnosti">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="text-center mb-12 md:mb-24">
               <span className="text-secondary font-bold tracking-[0.3em] uppercase text-xs block mb-4">{t.featLabel}</span>
-              <h2 className="text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.featHeading}</h2>
-              <p className="text-on-surface-variant text-xl max-w-2xl mx-auto">{t.featDesc}</p>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.featHeading}</h2>
+              <p className="text-on-surface-variant text-lg sm:text-xl max-w-2xl mx-auto">{t.featDesc}</p>
             </div>
 
-            <div className="space-y-32">
+            <div className="space-y-16 md:space-y-32">
               {/* Feature 1: Map */}
-              <div className="flex flex-col md:flex-row items-center gap-16">
+              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
                 <div className="flex-1 space-y-6">
                   <div className="w-16 h-16 bg-surface-container flex items-center justify-center asymmetric-shield">
                     <LineChart className="text-primary w-8 h-8" strokeWidth={2} />
                   </div>
-                  <h3 className="text-4xl font-black text-primary uppercase tracking-tight">{t.featMapTitle}</h3>
-                  <p className="text-xl text-on-surface-variant leading-relaxed">{t.featMapDesc}</p>
+                  <h3 className="text-2xl sm:text-4xl font-black text-primary uppercase tracking-tight">{t.featMapTitle}</h3>
+                  <p className="text-lg sm:text-xl text-on-surface-variant leading-relaxed">{t.featMapDesc}</p>
                 </div>
                 <div className="flex-1 w-full flex justify-center">
-                  <div className="relative w-64 h-[540px] bg-on-surface rounded-[3rem] p-4 shadow-2xl">
+                  <div className="relative w-48 h-[400px] sm:w-64 sm:h-[540px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-3 sm:p-4 shadow-2xl">
                     <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                       <img alt="Interactive map" className="w-full h-full object-cover" src={`${screenshots}/map.png`} loading="lazy" />
                     </div>
@@ -481,16 +510,16 @@ export default function App() {
               </div>
 
               {/* Feature 2: Report Problems */}
-              <div className="flex flex-col md:flex-row-reverse items-center gap-16">
+              <div className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16">
                 <div className="flex-1 space-y-6">
                   <div className="w-16 h-16 bg-surface-container flex items-center justify-center asymmetric-shield">
                     <AlertTriangle className="text-primary w-8 h-8" strokeWidth={2} />
                   </div>
-                  <h3 className="text-4xl font-black text-primary uppercase tracking-tight">{t.featReportTitle}</h3>
-                  <p className="text-xl text-on-surface-variant leading-relaxed">{t.featReportDesc}</p>
+                  <h3 className="text-2xl sm:text-4xl font-black text-primary uppercase tracking-tight">{t.featReportTitle}</h3>
+                  <p className="text-lg sm:text-xl text-on-surface-variant leading-relaxed">{t.featReportDesc}</p>
                 </div>
                 <div className="flex-1 w-full flex justify-center">
-                  <div className="relative w-64 h-[540px] bg-on-surface rounded-[3rem] p-4 shadow-2xl">
+                  <div className="relative w-48 h-[400px] sm:w-64 sm:h-[540px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-3 sm:p-4 shadow-2xl">
                     <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                       <img alt="Report bin problems" className="w-full h-full object-cover" src={`${screenshots}/prijava.png`} loading="lazy" />
                     </div>
@@ -499,16 +528,16 @@ export default function App() {
               </div>
 
               {/* Feature 3: AI Chatbot */}
-              <div className="flex flex-col md:flex-row items-center gap-16">
+              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
                 <div className="flex-1 space-y-6">
                   <div className="w-16 h-16 bg-surface-container flex items-center justify-center asymmetric-shield">
                     <MessageCircle className="text-primary w-8 h-8" strokeWidth={2} />
                   </div>
-                  <h3 className="text-4xl font-black text-primary uppercase tracking-tight">{t.featChatTitle}</h3>
-                  <p className="text-xl text-on-surface-variant leading-relaxed">{t.featChatDesc}</p>
+                  <h3 className="text-2xl sm:text-4xl font-black text-primary uppercase tracking-tight">{t.featChatTitle}</h3>
+                  <p className="text-lg sm:text-xl text-on-surface-variant leading-relaxed">{t.featChatDesc}</p>
                 </div>
                 <div className="flex-1 w-full flex justify-center">
-                  <div className="relative w-64 h-[540px] bg-on-surface rounded-[3rem] p-4 shadow-2xl">
+                  <div className="relative w-48 h-[400px] sm:w-64 sm:h-[540px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-3 sm:p-4 shadow-2xl">
                     <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                       <img alt="AI Eco-Assistant chatbot" className="w-full h-full object-cover" src={`${screenshots}/chat.png`} loading="lazy" />
                     </div>
@@ -517,7 +546,7 @@ export default function App() {
               </div>
 
               {/* Feature 4: Education & Multilingual */}
-              <div className="flex flex-col md:flex-row-reverse items-center gap-16">
+              <div className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16">
                 <div className="flex-1 space-y-6">
                   <div className="flex gap-3">
                     <div className="w-16 h-16 bg-surface-container flex items-center justify-center asymmetric-shield">
@@ -527,8 +556,8 @@ export default function App() {
                       <Globe className="text-primary w-8 h-8" strokeWidth={2} />
                     </div>
                   </div>
-                  <h3 className="text-4xl font-black text-primary uppercase tracking-tight">{t.featEduTitle}</h3>
-                  <p className="text-xl text-on-surface-variant leading-relaxed">{t.featEduDesc}</p>
+                  <h3 className="text-2xl sm:text-4xl font-black text-primary uppercase tracking-tight">{t.featEduTitle}</h3>
+                  <p className="text-lg sm:text-xl text-on-surface-variant leading-relaxed">{t.featEduDesc}</p>
                   <div className="flex flex-wrap gap-3 pt-2">
                     <span className="inline-flex items-center gap-2 py-2 px-4 bg-surface-container-high asymmetric-shield text-sm font-bold text-primary uppercase tracking-wide">
                       <Globe className="w-4 h-4" strokeWidth={2} /> {t.featEduTag1}
@@ -542,13 +571,13 @@ export default function App() {
                   </div>
                 </div>
                 <div className="flex-1 w-full flex justify-center gap-6">
-                  <div className="relative w-56 h-[480px] bg-on-surface rounded-[3rem] p-3 shadow-2xl -rotate-2">
+                  <div className="relative w-44 h-[380px] sm:w-56 sm:h-[480px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-2.5 sm:p-3 shadow-2xl -rotate-2">
                     <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                       <img alt="Education and facts" className="w-full h-full object-cover" src={`${screenshots}/facts.png`} loading="lazy" />
                     </div>
                   </div>
                   {lang === 'hr' && (
-                    <div className="hidden lg:block relative w-56 h-[480px] bg-on-surface rounded-[3rem] p-3 shadow-2xl rotate-2 mt-8">
+                    <div className="hidden lg:block relative w-44 h-[380px] sm:w-56 sm:h-[480px] bg-on-surface rounded-[2.5rem] sm:rounded-[3rem] p-2.5 sm:p-3 shadow-2xl rotate-2 mt-8">
                       <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden">
                         <img alt="Waste sorting guide" className="w-full h-full object-cover" src="/screenshots-hr/info.png" loading="lazy" />
                       </div>
@@ -561,16 +590,16 @@ export default function App() {
         </section>
 
         {/* Section 6: Impact / Za grad */}
-        <section className="py-32 bg-primary" id="za-grad">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="text-center mb-20">
+        <section className="py-16 sm:py-24 md:py-32 bg-primary" id="za-grad">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="text-center mb-10 md:mb-20">
               <span className="text-primary-container font-bold tracking-[0.3em] uppercase text-xs block mb-4">{t.impactLabel}</span>
-              <h2 className="text-5xl md:text-7xl font-black text-on-primary uppercase tracking-tighter mb-6">{t.impactHeading}</h2>
-              <p className="text-primary-fixed/80 text-xl max-w-2xl mx-auto leading-relaxed">{t.impactDesc}</p>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-on-primary uppercase tracking-tighter mb-6">{t.impactHeading}</h2>
+              <p className="text-primary-fixed/80 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">{t.impactDesc}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white/10 backdrop-blur-sm p-8 asymmetric-shield border border-white/10">
+              <div className="bg-white/10 backdrop-blur-sm p-6 sm:p-8 asymmetric-shield border border-white/10">
                 <div className="w-12 h-12 bg-on-primary-fixed-variant asymmetric-shield flex items-center justify-center mb-6">
                   <Radio className="text-primary-fixed w-6 h-6" strokeWidth={2} />
                 </div>
@@ -578,7 +607,7 @@ export default function App() {
                 <p className="text-primary-fixed/80 leading-relaxed">{t.impactCard1Desc}</p>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-sm p-8 asymmetric-shield border border-white/10">
+              <div className="bg-white/10 backdrop-blur-sm p-6 sm:p-8 asymmetric-shield border border-white/10">
                 <div className="w-12 h-12 bg-on-primary-fixed-variant asymmetric-shield flex items-center justify-center mb-6">
                   <LineChart className="text-primary-fixed w-6 h-6" strokeWidth={2} />
                 </div>
@@ -586,7 +615,7 @@ export default function App() {
                 <p className="text-primary-fixed/80 leading-relaxed">{t.impactCard2Desc}</p>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-sm p-8 asymmetric-shield border border-white/10">
+              <div className="bg-white/10 backdrop-blur-sm p-6 sm:p-8 asymmetric-shield border border-white/10">
                 <div className="w-12 h-12 bg-on-primary-fixed-variant asymmetric-shield flex items-center justify-center mb-6">
                   <Leaf className="text-primary-fixed w-6 h-6" strokeWidth={2} />
                 </div>
@@ -597,17 +626,17 @@ export default function App() {
           </div>
         </section>
         {/* Section 7: Technology Used */}
-        <section className="py-32 bg-surface-container-low">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="text-center mb-20">
+        <section className="py-16 sm:py-24 md:py-32 bg-surface-container-low">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="text-center mb-10 md:mb-20">
               <span className="text-secondary font-bold tracking-[0.3em] uppercase text-xs block mb-4">{t.techLabel}</span>
-              <h2 className="text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.techHeading}</h2>
-              <p className="text-on-surface-variant text-xl max-w-2xl mx-auto">{t.techDesc}</p>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-primary uppercase tracking-tighter mb-4">{t.techHeading}</h2>
+              <p className="text-on-surface-variant text-lg sm:text-xl max-w-2xl mx-auto">{t.techDesc}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
               {/* Development & Design */}
-              <div className="bg-surface-container-lowest p-8 asymmetric-shield">
+              <div className="bg-surface-container-lowest p-6 sm:p-8 asymmetric-shield">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-surface-container flex items-center justify-center asymmetric-shield">
                     <Code className="text-primary w-5 h-5" strokeWidth={2} />
@@ -640,7 +669,7 @@ export default function App() {
               </div>
 
               {/* AI & Intelligence */}
-              <div className="bg-surface-container-lowest p-8 asymmetric-shield">
+              <div className="bg-surface-container-lowest p-6 sm:p-8 asymmetric-shield">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-surface-container flex items-center justify-center asymmetric-shield">
                     <Sparkles className="text-primary w-5 h-5" strokeWidth={2} />
@@ -666,7 +695,7 @@ export default function App() {
               </div>
 
               {/* Infrastructure */}
-              <div className="bg-surface-container-lowest p-8 asymmetric-shield">
+              <div className="bg-surface-container-lowest p-6 sm:p-8 asymmetric-shield">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-surface-container flex items-center justify-center asymmetric-shield">
                     <Server className="text-primary w-5 h-5" strokeWidth={2} />
@@ -699,7 +728,7 @@ export default function App() {
               </div>
 
               {/* Data Sources */}
-              <div className="bg-surface-container-lowest p-8 asymmetric-shield">
+              <div className="bg-surface-container-lowest p-6 sm:p-8 asymmetric-shield">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-surface-container flex items-center justify-center asymmetric-shield">
                     <Building2 className="text-primary w-5 h-5" strokeWidth={2} />
@@ -731,7 +760,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="w-full border-t border-[#004482]/15 bg-[#FBF9F8]">
-        <div className="flex flex-col md:flex-row justify-between items-center py-12 px-8 max-w-7xl mx-auto gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center py-8 sm:py-12 px-4 sm:px-8 max-w-7xl mx-auto gap-4 text-center md:text-left">
           <div className="font-headline text-xs tracking-wider uppercase opacity-70 text-[#004482]">
             {t.footerCopy}
           </div>
