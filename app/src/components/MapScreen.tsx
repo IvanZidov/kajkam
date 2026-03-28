@@ -158,6 +158,7 @@ function MapResizer() {
 
 interface BinReport {
   id: string;
+  user_id: string | null;
   report_type: 'bin_issue' | 'illegal_dump';
   issue_type: string | null;
   image_url: string | null;
@@ -315,7 +316,7 @@ export default function MapScreen() {
     const fetchReports = async () => {
       const { data } = await supabase
         .from('bin_reports')
-        .select('id, report_type, issue_type, image_url, latitude, longitude, status, created_at, description')
+        .select('id, user_id, report_type, issue_type, image_url, latitude, longitude, status, created_at, description')
         .eq('status', 'reported')
         .order('created_at', { ascending: false })
         .limit(200);
@@ -403,6 +404,14 @@ export default function MapScreen() {
     resetReportState();
     setReportSuccess(true);
     setTimeout(() => setReportSuccess(false), 3000);
+  };
+
+  // Delete own report
+  const handleDeleteReport = async (report: BinReport) => {
+    if (!confirm(t.map.deleteConfirm)) return;
+    await supabase.from('bin_reports').delete().eq('id', report.id);
+    setSelectedReport(null);
+    setReports((prev) => prev.filter((r) => r.id !== report.id));
   };
 
   // Compute bins with distance from user
@@ -817,7 +826,11 @@ export default function MapScreen() {
                   <Camera className="w-4 h-4" />
                   {reportImage ? t.map.photoAdded : t.map.addPhoto}
                 </button>
-                {reportImage && <img src={reportImage} className="w-full h-32 object-cover shield-motif" alt="" />}
+                {reportImage && (
+                  <div className="w-full min-w-0 h-32 bg-surface-container-low shield-motif overflow-hidden flex items-center justify-center mt-1">
+                    <img src={reportImage} className="max-w-full max-h-full w-auto h-auto object-contain" alt="" />
+                  </div>
+                )}
 
                 {/* Description */}
                 <textarea
@@ -878,7 +891,28 @@ export default function MapScreen() {
             <h3 className="text-xs font-black uppercase tracking-widest text-secondary mb-1">
               {t.map.reportIllegalDump}
             </h3>
-            <p className="text-[10px] text-outline mb-3">{t.map.dragPinInstruction}</p>
+            <div className="flex items-center gap-2 mb-3">
+              <button
+                onClick={() => {
+                  if (userLocation) {
+                    setIllegalDumpPin(userLocation);
+                    setFlyTarget(userLocation);
+                    setFlyZoom(17);
+                  } else {
+                    locateUser().then((loc) => {
+                      setIllegalDumpPin(loc);
+                      setFlyTarget(loc);
+                      setFlyZoom(17);
+                    }).catch(() => {});
+                  }
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-primary text-white active:scale-95 transition-all"
+              >
+                <LocateFixed className="w-3.5 h-3.5" />
+                {t.map.useMyLocation}
+              </button>
+              <span className="text-[10px] text-outline">{t.map.orTapMap}</span>
+            </div>
 
             {/* Hidden file input */}
             <input ref={reportImageRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleReportImage} />
@@ -891,7 +925,11 @@ export default function MapScreen() {
               <Camera className="w-4 h-4" />
               {reportImage ? t.map.photoAdded : t.map.addPhoto}
             </button>
-            {reportImage && <img src={reportImage} className="w-full h-32 object-cover shield-motif mt-2" alt="" />}
+            {reportImage && (
+              <div className="w-full min-w-0 h-32 bg-surface-container-low shield-motif overflow-hidden flex items-center justify-center mt-2">
+                <img src={reportImage} className="max-w-full max-h-full w-auto h-auto object-contain" alt="" />
+              </div>
+            )}
 
             {/* Description */}
             <textarea
@@ -942,7 +980,13 @@ export default function MapScreen() {
 
             {/* Image */}
             {selectedReport.image_url && (
-              <img src={selectedReport.image_url} className="w-full h-40 object-cover shield-motif mb-3" alt="" />
+              <div className="w-full min-w-0 h-44 max-h-[min(50vh,220px)] bg-surface-container-low shield-motif overflow-hidden flex items-center justify-center mb-3">
+                <img
+                  src={selectedReport.image_url}
+                  className="max-w-full max-h-full w-auto h-auto object-contain"
+                  alt=""
+                />
+              </div>
             )}
 
             {/* Description */}
@@ -954,6 +998,17 @@ export default function MapScreen() {
             <p className="text-[10px] text-outline">
               {t.map.reportedOn} {new Date(selectedReport.created_at).toLocaleDateString()}
             </p>
+
+            {/* Delete button - only for own reports */}
+            {user && selectedReport.user_id === user.id && (
+              <button
+                onClick={() => handleDeleteReport(selectedReport)}
+                className="w-full mt-3 font-bold py-2 flex items-center justify-center gap-1.5 uppercase text-[10px] tracking-widest text-secondary hover:text-secondary/80 transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+                {t.map.deleteReport}
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -6,7 +6,7 @@ export interface Translations {
     scanner: string;
     map: string;
     chat: string;
-    profile: string;
+    rewards: string;
   };
   login: {
     greeting: string;
@@ -19,21 +19,29 @@ export interface Translations {
     ecoInitiative: string;
   };
   profile: {
-    sectionLabel: string;
     greeting: (name: string) => string;
-    thankYou: string;
-    yourEcoPoints: string;
-    pointsRemaining: (n: number) => string;
-    bagPackReward: string;
     qrTitle: string;
     qrSubtitle: string;
-    availableRewards: string;
-    rewardsDescription: string;
-    claimReward: string;
     signOut: string;
     signInWithGoogle: string;
     guest: string;
     user: string;
+  };
+  rewards: {
+    sectionLabel: string;
+    yourEcoPoints: string;
+    pointsRemaining: (n: number) => string;
+    claimReward: string;
+    notEnoughPoints: string;
+    pointsNeeded: (n: number) => string;
+    nextReward: string;
+    items: {
+      zgBags: { name: string; description: string };
+      zetDaily: { name: string; description: string };
+      compost: { name: string; description: string };
+      zetDiscount: { name: string; description: string };
+      zooTicket: { name: string; description: string };
+    };
   };
   scanner: {
     statusReady: string;
@@ -109,6 +117,10 @@ export interface Translations {
     reportedOn: string;
     guestReportNote: string;
     cancelReport: string;
+    deleteReport: string;
+    deleteConfirm: string;
+    useMyLocation: string;
+    orTapMap: string;
   };
   ai: {
     scannerSystemPrompt: string;
@@ -163,7 +175,7 @@ export const hr: Translations = {
     scanner: 'Skener',
     map: 'Karta',
     chat: 'Chat',
-    profile: 'Profil',
+    rewards: 'Nagrade',
   },
   login: {
     greeting: 'Bok, Zagreb!',
@@ -176,21 +188,29 @@ export const hr: Translations = {
     ecoInitiative: 'Eko Inicijativa',
   },
   profile: {
-    sectionLabel: 'MOJ PROFIL',
     greeting: (name) => `Bok, ${name}!`,
-    thankYou: 'Hvala što brineš o čistoći svog kvarta.',
-    yourEcoPoints: 'Tvoji EkoBodovi',
-    pointsRemaining: (n) => `Još ${n} bodova`,
-    bagPackReward: 'Paket ZG vrećica',
     qrTitle: 'IDENTIFIKACIJSKI QR',
     qrSubtitle: 'Pokaži na reciklažnom dvorištu za bodove',
-    availableRewards: 'DOSTUPNE NAGRADE',
-    rewardsDescription: 'Sakupi bodove recikliranjem i otključaj kupone za javni prijevoz ili ZG vrećice.',
-    claimReward: 'Preuzmi nagradu',
     signOut: 'Odjavi se',
     signInWithGoogle: 'Prijavi se s Google-om',
     guest: 'Gost',
     user: 'Korisnik',
+  },
+  rewards: {
+    sectionLabel: 'NAGRADE',
+    yourEcoPoints: 'Tvoji EkoBodovi',
+    pointsRemaining: (n) => `Još ${n} bodova`,
+    claimReward: 'Preuzmi',
+    notEnoughPoints: 'Nedovoljno bodova',
+    pointsNeeded: (n) => `Treba ti još ${n} bodova`,
+    nextReward: 'Do sljedeće nagrade',
+    items: {
+      zgBags: { name: 'ZG vrećice', description: 'Paket službenih zagrebačkih vrećica za otpad' },
+      zetDaily: { name: 'ZET dnevna karta', description: 'Dnevna karta za javni prijevoz' },
+      compost: { name: 'Kompost 25L', description: 'Vreća kvalitetnog komposta za vrt ili balkon' },
+      zetDiscount: { name: 'Popust za ZET', description: '20% popust na mjesečnu kartu javnog prijevoza' },
+      zooTicket: { name: 'Maksimir Zoo ulaznica', description: 'Besplatna ulaznica za Zoološki vrt Maksimir' },
+    },
   },
   scanner: {
     statusReady: 'Spremno',
@@ -268,6 +288,10 @@ export const hr: Translations = {
     reportedOn: 'Prijavljeno',
     guestReportNote: 'Prijavi se za EkoBodove',
     cancelReport: 'Odustani',
+    deleteReport: 'Ukloni prijavu',
+    deleteConfirm: 'Sigurno želiš ukloniti ovu prijavu?',
+    useMyLocation: 'Koristi moju lokaciju',
+    orTapMap: 'ili dodirni kartu',
   },
   ai: {
     scannerSystemPrompt: `Ti si AI sustav za prepoznavanje otpada u Zagrebu, Hrvatska.
@@ -410,7 +434,7 @@ export const en: Translations = {
     scanner: 'Scanner',
     map: 'Map',
     chat: 'Chat',
-    profile: 'Profile',
+    rewards: 'Rewards',
   },
   login: {
     greeting: 'Hello, Zagreb!',
@@ -423,21 +447,29 @@ export const en: Translations = {
     ecoInitiative: 'Eco Initiative',
   },
   profile: {
-    sectionLabel: 'MY PROFILE',
     greeting: (name) => `Hello, ${name}!`,
-    thankYou: 'Thank you for keeping your neighbourhood clean.',
-    yourEcoPoints: 'Your EcoPoints',
-    pointsRemaining: (n) => `${n} more points`,
-    bagPackReward: 'ZG Bag Package',
     qrTitle: 'IDENTIFICATION QR',
     qrSubtitle: 'Show at recycling yard for points',
-    availableRewards: 'AVAILABLE REWARDS',
-    rewardsDescription: 'Collect points by recycling and unlock coupons for public transport or ZG bags.',
-    claimReward: 'Claim reward',
     signOut: 'Sign out',
     signInWithGoogle: 'Sign in with Google',
     guest: 'Guest',
     user: 'User',
+  },
+  rewards: {
+    sectionLabel: 'REWARDS',
+    yourEcoPoints: 'Your EcoPoints',
+    pointsRemaining: (n) => `${n} more points`,
+    claimReward: 'Claim',
+    notEnoughPoints: 'Not enough points',
+    pointsNeeded: (n) => `You need ${n} more points`,
+    nextReward: 'To next reward',
+    items: {
+      zgBags: { name: 'ZG Waste Bags', description: 'Pack of official Zagreb waste bags' },
+      zetDaily: { name: 'ZET Daily Pass', description: 'Daily public transport ticket' },
+      compost: { name: 'Compost 25L', description: 'Bag of quality compost for garden or balcony' },
+      zetDiscount: { name: 'ZET Discount', description: '20% discount on monthly public transport pass' },
+      zooTicket: { name: 'Maksimir Zoo Ticket', description: 'Free entry to Zagreb Zoo Maksimir' },
+    },
   },
   scanner: {
     statusReady: 'Ready',
@@ -515,6 +547,10 @@ export const en: Translations = {
     reportedOn: 'Reported on',
     guestReportNote: 'Sign in for EcoPoints',
     cancelReport: 'Cancel',
+    deleteReport: 'Remove report',
+    deleteConfirm: 'Are you sure you want to remove this report?',
+    useMyLocation: 'Use my location',
+    orTapMap: 'or tap the map',
   },
   ai: {
     scannerSystemPrompt: `You are an AI waste recognition system for Zagreb, Croatia.

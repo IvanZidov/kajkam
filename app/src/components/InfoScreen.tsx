@@ -55,7 +55,7 @@ export default function InfoScreen({ onBack }: InfoScreenProps) {
           className="flex items-center gap-2 text-primary mb-4 active:scale-95 transition-transform"
         >
           <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
-          <span className="text-xs font-bold uppercase tracking-wider">{t.nav.profile}</span>
+          <span className="text-xs font-bold uppercase tracking-wider">{t.info.title}</span>
         </button>
         <div className="flex items-center gap-3">
           <div className="bg-primary-container p-3 shield-motif">
