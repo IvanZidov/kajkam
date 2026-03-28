@@ -243,7 +243,7 @@ export default function App() {
       <footer className="w-full border-t border-[#004482]/15 bg-[#FBF9F8]">
         <div className="flex flex-col md:flex-row justify-between items-center py-12 px-8 max-w-7xl mx-auto gap-4">
           <div className="font-headline text-xs tracking-wider uppercase opacity-70 text-[#004482]">
-            © 2024 KAJKAMO? GRAD ZAGREB CIVIC TECH PROJECT. ALL RIGHTS RESERVED.
+            © 2026 KAJKAMO? GRAD ZAGREB CIVIC TECH PROJECT. ALL RIGHTS RESERVED.
           </div>
           <div className="flex gap-8 font-headline text-xs tracking-wider uppercase opacity-70">
             <a className="text-slate-500 hover:text-[#004482] hover:underline underline-offset-4 transition-all" href="#">PRIVACY</a>
